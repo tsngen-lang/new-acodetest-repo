@@ -1,0 +1,1343 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Driver Core - Log Trip</title>
+    <style>
+      :root {
+        --bg-color: #000000;
+        --card-bg: #0a0a0a;
+        --input-bg: #141414;
+        --border-color: #262626;
+        --text-main: #ffffff;
+        --text-muted: #a3a3a3;
+        --primary-blue: #0084ff;
+        --accent-orange: #f59e0b;
+        --danger-red: #ef4444;
+        --success-green: #4ade80;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        margin: 0;
+        padding: 10px;
+      }
+
+      /* Top Bar Navigation */
+      .top-navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 5px;
+        margin-bottom: 15px;
+      }
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .badge-driver {
+        background-color: rgba(245, 158, 11, 0.15);
+        color: var(--accent-orange);
+        border: 1px solid var(--accent-orange);
+        font-size: 11px;
+        font-weight: bold;
+        padding: 3px 8px;
+        border-radius: 6px;
+        text-transform: uppercase;
+      }
+      .username {
+        font-size: 18px;
+        font-weight: 500;
+      }
+      .logout-btn {
+        color: var(--danger-red);
+        text-decoration: none;
+        font-size: 16px;
+      }
+
+      /* Horizontal Menu Tabs */
+      .nav-tabs {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+        scrollbar-width: none;
+      }
+      .nav-tabs::-webkit-scrollbar {
+        display: none;
+      }
+
+      .tab-btn {
+        background-color: #141414;
+        color: var(--text-muted);
+        border: 1px solid var(--border-color);
+        padding: 10px 16px;
+        border-radius: 12px;
+        font-size: 13px;
+        white-space: nowrap;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .tab-btn.active {
+        background-color: var(--primary-blue);
+        color: #fff;
+        border-color: var(--primary-blue);
+      }
+
+      /* Main Panel Wrapper */
+      .form-card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 20px;
+        max-width: 480px;
+        margin: 0 auto;
+      }
+
+      h2.form-title {
+        text-align: center;
+        font-size: 26px;
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-weight: 600;
+      }
+      .section-label {
+        color: var(--primary-blue);
+        font-size: 12px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-muted);
+        font-size: 15px;
+      }
+
+      /* Grid row layouts */
+      .datetime-row,
+      .earning-row {
+        display: flex;
+        gap: 12px;
+      }
+      .datetime-row .form-group,
+      .earning-row .form-group {
+        flex: 1;
+        margin-bottom: 0;
+      }
+
+      /* Standard Controls styling */
+      input[type="text"],
+      input[type="number"] {
+        width: 100%;
+        background-color: var(--input-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-main);
+        padding: 14px;
+        border-radius: 10px;
+        box-sizing: border-box;
+        font-size: 16px;
+      }
+      input::placeholder {
+        color: #525252;
+      }
+
+      /* Custom Picker Triggers */
+      .custom-picker-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: var(--input-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-main);
+        padding: 14px;
+        border-radius: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        height: 51px;
+        box-sizing: border-box;
+      }
+      .picker-placeholder {
+        color: #525252;
+      }
+
+      .icon-calendar {
+        width: 18px;
+        height: 18px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a3a3a3' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' /%3E%3C/svg%3E")
+          no-repeat center;
+      }
+      .icon-clock {
+        width: 18px;
+        height: 18px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a3a3a3' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' /%3E%3C/svg%3E")
+          no-repeat center;
+      }
+
+      /* Dynamic Chips Styling */
+      .chip-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        background-color: #141414;
+        border: 1px solid var(--border-color);
+        color: var(--text-main);
+        padding: 8px 18px;
+        border-radius: 20px;
+        font-size: 14px;
+        cursor: pointer;
+        gap: 8px;
+      }
+      .chip.active {
+        background-color: var(--primary-blue);
+        border-color: var(--primary-blue);
+      }
+      .chip-add {
+        background-color: transparent;
+        border: 1px dashed var(--primary-blue);
+        color: var(--primary-blue);
+      }
+
+      .chip-remove-btn {
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 18px;
+        font-weight: bold;
+        padding: 0 0 0 4px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+      }
+
+      /* Inline Custom Entry Groups */
+      .inline-add-row {
+        display: none;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+        width: 100%;
+      }
+      .inline-add-row input {
+        flex: 1;
+        padding: 10px 14px;
+        background-color: var(--bg-color);
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        color: white;
+        font-size: 15px;
+      }
+      .inline-btn-add {
+        background-color: var(--primary-blue);
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 10px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .inline-btn-cancel {
+        background-color: transparent;
+        color: var(--text-muted);
+        border: 1px solid var(--border-color);
+        padding: 10px 14px;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+
+      /* Binary Toggle Switch Layouts */
+      .toggle-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: var(--input-bg);
+        border: 1px solid var(--border-color);
+        padding: 14px;
+        border-radius: 12px;
+      }
+      .toggle-label {
+        color: var(--text-main);
+        font-size: 16px;
+      }
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 48px;
+        height: 26px;
+      }
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #262626;
+        transition: 0.3s;
+        border-radius: 34px;
+      }
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.3s;
+        border-radius: 50%;
+      }
+      input:checked + .slider {
+        background-color: var(--primary-blue);
+      }
+      input:checked + .slider:before {
+        transform: translateX(22px);
+      }
+
+      /* Extra Job Conditional Section */
+      .conditional-section {
+        display: none;
+        margin-top: 15px;
+        border-left: 2px solid var(--primary-blue);
+        padding-left: 12px;
+      }
+
+      .submit-btn {
+        width: 100%;
+        background-color: var(--primary-blue);
+        color: #ffffff;
+        border: none;
+        padding: 14px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 20px;
+        cursor: pointer;
+      }
+
+      /* History Module Feed Layout Styles */
+      .history-list {
+        margin-top: 25px;
+      }
+      .history-item {
+        background: #0f0f0f;
+        border: 1px solid var(--border-color);
+        padding: 14px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        line-height: 1.5;
+        position: relative;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .history-content {
+        flex: 1;
+      }
+      .history-main-row {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+        margin-bottom: 4px;
+        padding-right: 50px;
+      }
+      .history-fare {
+        color: var(--success-green);
+        font-size: 16px;
+      }
+
+      .claim-checkbox {
+        width: 20px;
+        height: 20px;
+        margin-top: 2px;
+        accent-color: var(--primary-blue);
+        cursor: pointer;
+      }
+      .claim-checkbox:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+
+      /* Badges */
+      .badge-cash-tag {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: var(--danger-red);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        font-size: 11px;
+        padding: 1px 6px;
+        border-radius: 4px;
+        font-weight: bold;
+        margin-left: 6px;
+      }
+
+      /* Live Claims Summary Banner */
+      .claims-summary-banner {
+        background-color: #0d1527;
+        border: 1px dashed var(--primary-blue);
+        padding: 14px;
+        border-radius: 12px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .claims-summary-title {
+        font-size: 14px;
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+      .claims-summary-amount {
+        font-size: 18px;
+        color: var(--primary-blue);
+        font-weight: bold;
+      }
+
+      .history-actions {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        display: flex;
+        gap: 8px;
+      }
+      .edit-btn {
+        background: none;
+        border: none;
+        color: var(--primary-blue);
+        font-size: 13px;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 6px;
+      }
+
+      /* Custom Scrolling Roller Bottom Sheet Modal Styles */
+      .bottom-sheet {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: #121212;
+        border-top-left-radius: 24px;
+        border-top-right-radius: 24px;
+        padding: 20px;
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.8);
+        transform: translateY(100%);
+        transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        z-index: 1000;
+      }
+      .bottom-sheet.open {
+        transform: translateY(0);
+      }
+      .sheet-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: none;
+        z-index: 999;
+      }
+      .sheet-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+      .sheet-btn-cancel {
+        color: var(--text-muted);
+        cursor: pointer;
+      }
+      .sheet-btn-done {
+        color: var(--primary-blue);
+        cursor: pointer;
+      }
+
+      .roller-container {
+        display: flex;
+        justify-content: center;
+        height: 200px;
+        position: relative;
+        overflow: hidden;
+        background: #171717;
+        border-radius: 14px;
+      }
+      .roller-selection-box {
+        position: absolute;
+        top: 80px;
+        left: 10px;
+        right: 10px;
+        height: 40px;
+        border: 1px solid var(--primary-blue);
+        border-radius: 8px;
+        pointer-events: none;
+        background: rgba(0, 132, 255, 0.05);
+      }
+      .roller-column {
+        flex: 1;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        scrollbar-width: none;
+        text-align: center;
+        padding-top: 80px;
+        padding-bottom: 80px;
+      }
+      .roller-column::-webkit-scrollbar {
+        display: none;
+      }
+      .roller-item {
+        height: 40px;
+        line-height: 40px;
+        font-size: 18px;
+        color: var(--text-muted);
+        scroll-snap-align: center;
+        transition:
+          color 0.2s,
+          font-weight 0.2s;
+      }
+      .roller-item.selected {
+        color: var(--text-main);
+        font-weight: bold;
+        font-size: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-navbar">
+      <div class="user-info">
+        <span class="badge-driver">Driver</span>
+        <span class="username">tsngen</span>
+      </div>
+      <a
+        href="#"
+        class="logout-btn"
+        onclick="alert('Offline execution configuration active')"
+        >Log Out</a
+      >
+    </div>
+
+    <div class="nav-tabs" id="mainNavigationRow">
+      <button
+        class="tab-btn active"
+        onclick="window.location.href = 'index.html'"
+      >
+        Log Trip
+      </button>
+      <button class="tab-btn" onclick="window.location.href = 'claim.html'">
+        Claims
+      </button>
+      <button class="tab-btn" onclick="window.location.href = 'expenses.html'">
+        Expenses
+      </button>
+      <button class="tab-btn" onclick="window.location.href = 'rental.html'">
+        Rental
+      </button>
+      <button class="tab-btn" onclick="alert('Module opening soon')">
+        Profile
+      </button>
+    </div>
+
+    <div class="form-card">
+      <div id="log-trip-view" class="app-view" style="display: block">
+        <h2 class="form-title" id="formHeaderTitle">Log Trip Data</h2>
+        <div class="section-label">Job Details</div>
+
+        <div class="form-group datetime-row">
+          <div class="form-group">
+            <label>Job Commence Date</label>
+            <div
+              class="custom-picker-trigger"
+              onclick="openWheelPicker('date')"
+            >
+              <span id="dateValueDisplay">11 Jul 2026</span>
+              <div class="icon-calendar"></div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Pickup Time</label>
+            <div
+              class="custom-picker-trigger"
+              onclick="openWheelPicker('time')"
+            >
+              <span id="timeValueDisplay" class="picker-placeholder"
+                >Set time</span
+              >
+              <div class="icon-clock"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group earning-row" style="margin-top: 20px">
+          <div class="form-group">
+            <label>Main Trip Fare (RM)</label>
+            <input
+              type="number"
+              id="mainFare"
+              placeholder="e.g. 150"
+              inputmode="numeric"
+            />
+            <label
+              style="
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-top: 10px;
+                cursor: pointer;
+                font-size: 14px;
+                color: var(--text-main);
+              "
+            >
+              <input
+                type="checkbox"
+                id="isCashPaid"
+                style="
+                  width: 18px;
+                  height: 18px;
+                  accent-color: var(--primary-blue);
+                "
+              />
+              <span>Paid Cash by Customer (No JG Claim)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px">
+          <label>Car Type</label>
+          <div class="chip-group" id="carGroup">
+            <div class="chip active" onclick="selectChip(this, 'carGroup')">
+              <span>Bezza</span
+              ><button
+                class="chip-remove-btn"
+                onclick="removeChip(this, event, 'carGroup')"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="chip" onclick="selectChip(this, 'carGroup')">
+              <span>Vios</span
+              ><button
+                class="chip-remove-btn"
+                onclick="removeChip(this, event, 'carGroup')"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="chip" onclick="selectChip(this, 'carGroup')">
+              <span>Alphard</span
+              ><button
+                class="chip-remove-btn"
+                onclick="removeChip(this, event, 'carGroup')"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="chip" onclick="selectChip(this, 'carGroup')">
+              <span>Starex</span
+              ><button
+                class="chip-remove-btn"
+                onclick="removeChip(this, event, 'carGroup')"
+              >
+                &times;
+              </button>
+            </div>
+            <div
+              class="chip chip-add"
+              id="addCarBtn"
+              onclick="showInlineInput('car')"
+            >
+              + Add Car Type
+            </div>
+          </div>
+          <div class="inline-add-row" id="inlineCarRow">
+            <input type="text" id="newCarInput" placeholder="Enter car type" />
+            <button class="inline-btn-add" onclick="submitInlineData('car')">
+              Add
+            </button>
+            <button class="inline-btn-cancel" onclick="hideInlineInput('car')">
+              Cancel
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Car Plate Number</label>
+          <input
+            type="text"
+            id="plateNumber"
+            value="VKE7927"
+            placeholder="Enter plate number"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Job Type</label>
+          <div class="chip-group" id="jobTypeGroup">
+            <div class="chip active" onclick="selectChip(this, 'jobTypeGroup')">
+              <span>KL Charter</span
+              ><button
+                class="chip-remove-btn"
+                onclick="removeChip(this, event, 'jobTypeGroup')"
+              >
+                &times;
+              </button>
+            </div>
+            <div class="chip" onclick="selectChip(this, 'jobTypeGroup')">
+              <span>Johor Charter</span
+              ><button
+                class="chip-remove-btn"
+                onclick="removeChip(this, event, 'jobTypeGroup')"
+              >
+                &times;
+              </button>
+            </div>
+            <div
+              class="chip chip-add"
+              id="addJobBtn"
+              onclick="showInlineInput('job')"
+            >
+              + Add Job Type
+            </div>
+          </div>
+          <div class="inline-add-row" id="inlineJobRow">
+            <input type="text" id="newJobInput" placeholder="Enter job type" />
+            <button class="inline-btn-add" onclick="submitInlineData('job')">
+              Add
+            </button>
+            <button class="inline-btn-cancel" onclick="hideInlineInput('job')">
+              Cancel
+            </button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Pickup Location</label>
+          <input
+            type="text"
+            id="pickupLocation"
+            placeholder="Enter pickup location"
+          />
+        </div>
+
+        <div class="form-group">
+          <div class="toggle-container">
+            <span class="toggle-label">Any Extra Job?</span>
+            <label class="switch">
+              <input
+                type="checkbox"
+                id="extraJobToggle"
+                onchange="toggleExtraJobPanel(this)"
+              />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="conditional-section" id="extraJobPanel">
+          <div class="form-group">
+            <label>Extra Job Earnings (RM)</label>
+            <input
+              type="number"
+              id="extraEarnings"
+              placeholder="e.g. 30"
+              inputmode="numeric"
+            />
+          </div>
+          <div class="form-group">
+            <label>Claim (JG) (RM)</label>
+            <input
+              type="number"
+              id="claimJG"
+              placeholder="e.g. 20"
+              inputmode="numeric"
+            />
+          </div>
+          <div class="form-group">
+            <label>Extra Job Note</label>
+            <input
+              type="text"
+              id="extraNote"
+              placeholder="e.g. Side delivery detour"
+            />
+          </div>
+        </div>
+
+        <button class="submit-btn" id="submitFormBtn" onclick="saveTripLocal()">
+          Save Trip
+        </button>
+
+        <div
+          class="claims-summary-banner"
+          id="globalClaimsBanner"
+          style="display: none"
+        >
+          <span class="claims-summary-title"
+            >Selected Batch Claim Sum (JG):</span
+          >
+          <span class="claims-summary-amount"
+            >RM <span id="claimsTotalValueShared">0.00</span></span
+          >
+        </div>
+
+        <div class="history-list" id="localHistory"></div>
+      </div>
+    </div>
+
+    <div
+      class="sheet-overlay"
+      id="sheetOverlay"
+      onclick="closeWheelPicker()"
+    ></div>
+
+    <div class="bottom-sheet" id="wheelBottomSheet">
+      <div class="sheet-header">
+        <span class="sheet-btn-cancel" onclick="closeWheelPicker()"
+          >Cancel</span
+        >
+        <span id="sheetTitleDisplay">Select Date</span>
+        <span class="sheet-btn-done" onclick="confirmWheelSelection()"
+          >Done</span
+        >
+      </div>
+      <div class="roller-container">
+        <div class="roller-selection-box"></div>
+        <div
+          class="roller-column"
+          id="colLeft"
+          onscroll="handleColumnScroll(this)"
+        ></div>
+        <div
+          class="roller-column"
+          id="colMiddle"
+          onscroll="handleColumnScroll(this)"
+        ></div>
+        <div
+          class="roller-column"
+          id="colRight"
+          onscroll="handleColumnScroll(this)"
+        ></div>
+      </div>
+    </div>
+
+    <script>
+      const months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+      let currentPickerMode = "date";
+      let editingTripId = null;
+
+      const carPlatesRegistry = {
+        bezza: "VKE7927",
+        vios: "BKE3213",
+        alphard: "WVV8888",
+        starex: "QKE9794",
+      };
+
+      function getSavedData(key) {
+        return JSON.parse(localStorage.getItem(key)) || [];
+      }
+
+      function saveSelectionData(selectedIds) {
+        localStorage.setItem("selectedTripIds", JSON.stringify(selectedIds));
+      }
+
+      function selectChip(element, groupId) {
+        const container = document.getElementById(groupId);
+        container
+          .querySelectorAll(".chip")
+          .forEach((c) => c.classList.remove("active"));
+        element.classList.add("active");
+
+        if (groupId === "carGroup") {
+          const carName = element
+            .querySelector("span")
+            .innerText.trim()
+            .toLowerCase();
+          const plateInput = document.getElementById("plateNumber");
+          if (carPlatesRegistry[carName]) {
+            plateInput.value = carPlatesRegistry[carName];
+          } else if (!editingTripId) {
+            plateInput.value = "";
+            plateInput.placeholder = "Enter custom plate number";
+          }
+        }
+      }
+
+      function removeChip(buttonElement, event, groupId) {
+        event.stopPropagation();
+        const chip = buttonElement.parentElement;
+        const wasActive = chip.classList.contains("active");
+        const container = document.getElementById(groupId);
+        chip.remove();
+        if (wasActive) {
+          const firstChip = container.querySelector(".chip");
+          if (firstChip && !firstChip.classList.contains("chip-add"))
+            selectChip(firstChip, groupId);
+        }
+      }
+
+      function showInlineInput(type) {
+        if (type === "car") {
+          document.getElementById("inlineCarRow").style.display = "flex";
+          document.getElementById("addCarBtn").style.display = "none";
+          document.getElementById("newCarInput").focus();
+        } else if (type === "job") {
+          document.getElementById("inlineJobRow").style.display = "flex";
+          document.getElementById("addJobBtn").style.display = "none";
+          document.getElementById("newJobInput").focus();
+        }
+      }
+
+      function hideInlineInput(type) {
+        if (type === "car") {
+          document.getElementById("inlineCarRow").style.display = "none";
+          document.getElementById("addCarBtn").style.display = "block";
+          document.getElementById("newCarInput").value = "";
+        } else if (type === "job") {
+          document.getElementById("inlineJobRow").style.display = "none";
+          document.getElementById("addJobBtn").style.display = "block";
+          document.getElementById("newJobInput").value = "";
+        }
+      }
+
+      function createNewChipMarkup(value, groupId) {
+        const newChip = document.createElement("div");
+        newChip.className = "chip";
+        newChip.onclick = function () {
+          selectChip(this, groupId);
+        };
+        const textSpan = document.createElement("span");
+        textSpan.innerText = value;
+        newChip.appendChild(textSpan);
+        const removeBtn = document.createElement("button");
+        removeBtn.className = "chip-remove-btn";
+        removeBtn.innerHTML = "&times;";
+        removeBtn.onclick = function (e) {
+          removeChip(this, e, groupId);
+        };
+        newChip.appendChild(removeBtn);
+        return newChip;
+      }
+
+      function submitInlineData(type) {
+        let inputEl, groupEl, btnEl;
+        if (type === "car") {
+          inputEl = document.getElementById("newCarInput");
+          groupEl = document.getElementById("carGroup");
+          btnEl = document.getElementById("addCarBtn");
+        } else {
+          inputEl = document.getElementById("newJobInput");
+          groupEl = document.getElementById("jobTypeGroup");
+          btnEl = document.getElementById("addJobBtn");
+        }
+        const value = inputEl.value.trim();
+        if (!value) return;
+        const newChip = createNewChipMarkup(value, groupEl.id);
+        groupEl.insertBefore(newChip, btnEl);
+        selectChip(newChip, groupEl.id);
+        hideInlineInput(type);
+      }
+
+      function toggleExtraJobPanel(toggleInput) {
+        const panel = document.getElementById("extraJobPanel");
+        panel.style.display = toggleInput.checked ? "block" : "none";
+        if (!toggleInput.checked) {
+          document.getElementById("extraEarnings").value = "";
+          document.getElementById("claimJG").value = "";
+          document.getElementById("extraNote").value = "";
+        }
+      }
+
+      function populateWheel(columnElement, start, end, formatFunc) {
+        columnElement.innerHTML = "";
+        for (let i = start; i <= end; i++) {
+          const item = document.createElement("div");
+          item.className = "roller-item";
+          item.innerText = formatFunc ? formatFunc(i) : i;
+          columnElement.appendChild(item);
+        }
+      }
+
+      function handleColumnScroll(col) {
+        const index = Math.round(col.scrollTop / 40);
+        const items = col.querySelectorAll(".roller-item");
+        items.forEach((item, idx) => {
+          if (idx === index) item.classList.add("selected");
+          else item.classList.remove("selected");
+        });
+      }
+
+      function scrollToValue(columnElement, value) {
+        const items = columnElement.querySelectorAll(".roller-item");
+        let targetIndex = 0;
+        items.forEach((item, idx) => {
+          if (item.innerText === String(value)) targetIndex = idx;
+        });
+        setTimeout(() => {
+          columnElement.scrollTop = targetIndex * 40;
+        }, 10);
+      }
+
+      function openWheelPicker(mode) {
+        currentPickerMode = mode;
+        const leftCol = document.getElementById("colLeft");
+        const middleCol = document.getElementById("colMiddle");
+        const rightCol = document.getElementById("colRight");
+        document.getElementById("sheetOverlay").style.display = "block";
+        document.getElementById("wheelBottomSheet").classList.add("open");
+
+        if (mode === "date") {
+          document.getElementById("sheetTitleDisplay").innerText =
+            "Job Commence Date";
+          rightCol.style.display = "block";
+          populateWheel(leftCol, 1, 31, (i) => String(i).padStart(2, "0"));
+          populateWheel(middleCol, 0, 11, (i) => months[i]);
+          populateWheel(rightCol, 2025, 2030);
+          const currentDisplay = document
+            .getElementById("dateValueDisplay")
+            .innerText.split(" ");
+          scrollToValue(leftCol, currentDisplay[0] || "11");
+          scrollToValue(middleCol, currentDisplay[1] || "Jul");
+          scrollToValue(rightCol, currentDisplay[2] || "2026");
+        } else {
+          document.getElementById("sheetTitleDisplay").innerText =
+            "Pickup Time";
+          rightCol.style.display = "none";
+          populateWheel(leftCol, 0, 23, (i) => String(i).padStart(2, "0"));
+          populateWheel(middleCol, 0, 59, (i) => String(i).padStart(2, "0"));
+          const timeDisplay = document.getElementById("timeValueDisplay");
+          if (!timeDisplay.classList.contains("picker-placeholder")) {
+            const parts = timeDisplay.innerText.split(":");
+            scrollToValue(leftCol, parts[0]);
+            scrollToValue(middleCol, parts[1]);
+          } else {
+            scrollToValue(leftCol, "08");
+            scrollToValue(middleCol, "30");
+          }
+        }
+      }
+
+      function closeWheelPicker() {
+        document.getElementById("sheetOverlay").style.display = "none";
+        document.getElementById("wheelBottomSheet").classList.remove("open");
+      }
+
+      function confirmWheelSelection() {
+        const leftVal =
+          document.querySelector("#colLeft .roller-item.selected")?.innerText ||
+          "00";
+        const middleVal =
+          document.querySelector("#colMiddle .roller-item.selected")
+            ?.innerText || "00";
+        if (currentPickerMode === "date") {
+          const rightVal =
+            document.querySelector("#colRight .roller-item.selected")
+              ?.innerText || "2026";
+          document.getElementById("dateValueDisplay").innerText =
+            `${leftVal} ${middleVal} ${rightVal}`;
+        } else {
+          const displayField = document.getElementById("timeValueDisplay");
+          displayField.innerText = `${leftVal}:${middleVal}`;
+          displayField.classList.remove("picker-placeholder");
+        }
+        closeWheelPicker();
+      }
+
+      function calculateClaimTotal() {
+        const trips = getSavedData("savedTrips");
+        let selectedTripIds = getSavedData("selectedTripIds");
+        let accumulatedClaimsSum = 0;
+
+        selectedTripIds.forEach((id) => {
+          const match = trips.find((t) => t.id === Number(id));
+          if (match && !match.isCash) {
+            let baseFareNum = parseFloat(match.mainFare) || 0;
+            let extraClaimNum = match.extra
+              ? parseFloat(match.extra.claimJG) || 0
+              : 0;
+            accumulatedClaimsSum += baseFareNum + extraClaimNum;
+          }
+        });
+
+        const banner = document.getElementById("globalClaimsBanner");
+        const totalField = document.getElementById("claimsTotalValueShared");
+
+        banner.style.display = selectedTripIds.length > 0 ? "flex" : "none";
+        totalField.textContent = accumulatedClaimsSum.toFixed(2);
+      }
+
+      function toggleTripSelection(checkbox, tripId, plateNumber) {
+        tripId = Number(tripId);
+        let selectedTripIds = getSavedData("selectedTripIds");
+
+        if (checkbox.checked) {
+          const trips = getSavedData("savedTrips");
+          let activePlates = [];
+
+          selectedTripIds.forEach((id) => {
+            const match = trips.find((t) => t.id === id);
+            if (match && !activePlates.includes(match.plate))
+              activePlates.push(match.plate);
+          });
+
+          if (activePlates.length > 0 && !activePlates.includes(plateNumber)) {
+            alert(
+              `Selection Error!\n\nYou can only push items with the SAME Plate Number to the claim batch.\nStaged Batch Plate: ${activePlates[0]}\nSelected Car Plate: ${plateNumber}`,
+            );
+            checkbox.checked = false;
+            return;
+          }
+
+          if (!selectedTripIds.includes(tripId)) selectedTripIds.push(tripId);
+        } else {
+          selectedTripIds = selectedTripIds.filter((id) => id !== tripId);
+        }
+
+        saveSelectionData(selectedTripIds);
+        calculateClaimTotal();
+      }
+
+      function saveTripLocal() {
+        const dateStr = document.getElementById("dateValueDisplay").innerText;
+        const timeField = document.getElementById("timeValueDisplay");
+        const timeStr = timeField.classList.contains("picker-placeholder")
+          ? "Not Set"
+          : timeField.innerText;
+        const mainFare = document.getElementById("mainFare").value;
+        const isCashPaid = document.getElementById("isCashPaid").checked;
+        const plate = document.getElementById("plateNumber").value;
+        const loc =
+          document.getElementById("pickupLocation").value || "Not Specified";
+        const hasExtra = document.getElementById("extraJobToggle").checked;
+        const extraAmt = document.getElementById("extraEarnings").value || 0;
+        const claimAmt = document.getElementById("claimJG").value || 0;
+        const extraMsg = document.getElementById("extraNote").value || "";
+
+        if (!mainFare) {
+          alert("Please enter your Main Trip Fare amount!");
+          return;
+        }
+
+        const activeCar =
+          document.querySelector("#carGroup .chip.active span")?.innerText ||
+          "None";
+        const activeJobType =
+          document.querySelector("#jobTypeGroup .chip.active span")
+            ?.innerText || "None";
+        let trips = getSavedData("savedTrips");
+
+        const tripData = {
+          id: editingTripId ? editingTripId : Date.now(),
+          dateStr: dateStr,
+          timeStr: timeStr,
+          mainFare: parseFloat(mainFare).toFixed(2),
+          isCash: isCashPaid,
+          car: activeCar,
+          plate: plate,
+          type: activeJobType,
+          location: loc,
+          extra: hasExtra
+            ? {
+                amount: parseFloat(extraAmt).toFixed(2),
+                claimJG: parseFloat(claimAmt).toFixed(2),
+                note: extraMsg,
+              }
+            : null,
+        };
+
+        if (editingTripId) {
+          trips = trips.map((t) => (t.id === editingTripId ? tripData : t));
+          editingTripId = null;
+          document.getElementById("formHeaderTitle").innerText =
+            "Log Trip Data";
+          document.getElementById("submitFormBtn").innerText = "Save Trip";
+        } else {
+          trips.unshift(tripData);
+        }
+
+        localStorage.setItem("savedTrips", JSON.stringify(trips));
+
+        document.getElementById("mainFare").value = "";
+        document.getElementById("isCashPaid").checked = false;
+        document.getElementById("pickupLocation").value = "";
+        document.getElementById("extraJobToggle").checked = false;
+        toggleExtraJobPanel(document.getElementById("extraJobToggle"));
+        timeField.innerText = "Set time";
+        timeField.classList.add("picker-placeholder");
+
+        const bezzaChip = document.querySelector("#carGroup .chip");
+        if (bezzaChip) selectChip(bezzaChip, "carGroup");
+
+        renderHistory();
+        alert("Trip securely saved!");
+      }
+
+      function editTrip(id) {
+        const trips = getSavedData("savedTrips");
+        const target = trips.find((t) => t.id === id);
+        if (!target) return;
+
+        editingTripId = id;
+        document.getElementById("formHeaderTitle").innerText =
+          "Edit Trip Configuration";
+        document.getElementById("submitFormBtn").innerText = "Update Changes";
+        document.getElementById("dateValueDisplay").innerText = target.dateStr;
+
+        const timeField = document.getElementById("timeValueDisplay");
+        if (target.timeStr === "Not Set") {
+          timeField.innerText = "Set time";
+          timeField.classList.add("picker-placeholder");
+        } else {
+          timeField.innerText = target.timeStr;
+          timeField.classList.remove("picker-placeholder");
+        }
+
+        document.getElementById("mainFare").value = target.mainFare;
+        document.getElementById("isCashPaid").checked = target.isCash || false;
+        document.getElementById("pickupLocation").value =
+          target.location === "Not Specified" ? "" : target.location;
+
+        const carGroup = document.getElementById("carGroup");
+        let carChipFound = Array.from(
+          carGroup.querySelectorAll(".chip span"),
+        ).find((s) => s.innerText === target.car);
+        if (!carChipFound && target.car !== "None") {
+          const addedChip = createNewChipMarkup(target.car, "carGroup");
+          carGroup.insertBefore(
+            addedChip,
+            document.getElementById("addCarBtn"),
+          );
+          carChipFound = addedChip.querySelector("span");
+        }
+        if (carChipFound) selectChip(carChipFound.parentElement, "carGroup");
+        document.getElementById("plateNumber").value = target.plate;
+
+        const jobGroup = document.getElementById("jobTypeGroup");
+        let jobChipFound = Array.from(
+          jobGroup.querySelectorAll(".chip span"),
+        ).find((s) => s.innerText === target.type);
+        if (!jobChipFound && target.type !== "None") {
+          const addedChip = createNewChipMarkup(target.type, "jobTypeGroup");
+          jobGroup.insertBefore(
+            addedChip,
+            document.getElementById("addJobBtn"),
+          );
+          jobChipFound = addedChip.querySelector("span");
+        }
+        if (jobChipFound)
+          selectChip(jobChipFound.parentElement, "jobTypeGroup");
+
+        const toggle = document.getElementById("extraJobToggle");
+        if (target.extra) {
+          toggle.checked = true;
+          toggleExtraJobPanel(toggle);
+          document.getElementById("extraEarnings").value = target.extra.amount;
+          document.getElementById("claimJG").value = target.extra.claimJG || "";
+          document.getElementById("extraNote").value = target.extra.note;
+        } else {
+          toggle.checked = false;
+          toggleExtraJobPanel(toggle);
+        }
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function renderHistory() {
+        const trips = getSavedData("savedTrips");
+        let selectedTripIds = getSavedData("selectedTripIds");
+        const logFeedContainer = document.getElementById("localHistory");
+
+        if (trips.length === 0) {
+          logFeedContainer.innerHTML = "";
+          calculateClaimTotal();
+          return;
+        }
+
+        logFeedContainer.innerHTML =
+          "<h3 style='font-size:16px; border-bottom:1px solid #262626; padding-bottom:5px; margin-top:25px; color:var(--primary-blue);'>Logged History</h3>";
+
+        trips.forEach((t) => {
+          let baseFareNum = parseFloat(t.mainFare) || 0;
+          let extraAmountNum = t.extra ? parseFloat(t.extra.amount) || 0 : 0;
+          let extraClaimNum = t.extra ? parseFloat(t.extra.claimJG) || 0 : 0;
+
+          let totalTripEarnings = baseFareNum + extraAmountNum + extraClaimNum;
+
+          let extraBlockHtml = "";
+          if (t.extra) {
+            extraBlockHtml = `
+                    <div style="color:var(--accent-orange); font-size:13px; margin-top:4px;">
+                        + Extra Earning: RM ${t.extra.amount} 
+                        ${t.isCash ? `<span style="color:#737373;">| <del>Claim (JG): RM ${t.extra.claimJG}</del></span>` : `| Claim (JG): RM ${extraClaimNum.toFixed(2)}`}
+                        ${t.extra.note ? `(${t.extra.note})` : ""}
+                    </div>`;
+          }
+
+          const isChecked = selectedTripIds.includes(t.id);
+          const cashBadge = t.isCash
+            ? `<span class="badge-cash-tag">Cash Paid</span>`
+            : "";
+
+          logFeedContainer.innerHTML += `
+                <div class="history-item" style="${t.isCash ? "border-color: rgba(239, 68, 68, 0.4);" : ""}">
+                    <input type="checkbox" class="claim-checkbox" ${t.isCash ? "disabled" : ""} ${isChecked ? "checked" : ""} onchange="toggleTripSelection(this, '${t.id}', '${t.plate}')">
+                    <div class="history-content">
+                        <div class="history-actions">
+                            <button class="edit-btn" onclick="editTrip(${t.id})">Edit</button>
+                        </div>
+                        <div class="history-main-row">
+                            <span>${t.car} (${t.plate}) ${cashBadge}</span>
+                            <span class="history-fare">Total: RM ${totalTripEarnings.toFixed(2)}</span>
+                        </div>
+                        <div style="color:#737373; font-size:12px; margin-bottom:4px;">${t.dateStr} @ ${t.timeStr} — Type: ${t.type}</div>
+                        <div style="color:#a3a3a3;">Loc: ${t.location}</div>
+                        <div style="color:#a3a3a3; font-size:13px;">Base Fare: RM ${t.mainFare} ${t.isCash ? "(Paid Cash)" : ""}</div>
+                        ${extraBlockHtml}
+                    </div>
+                </div>
+            `;
+        });
+
+        calculateClaimTotal();
+      }
+
+      renderHistory();
+    </script>
+  </body>
+</html>

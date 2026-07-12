@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Driver Core - Log Rental</title>
+    <style>
+      :root {
+        --bg-color: #000000;
+        --card-bg: #0a0a0a;
+        --input-bg: #141414;
+        --border-color: #262626;
+        --text-main: #ffffff;
+        --text-muted: #a3a3a3;
+        --primary-blue: #0084ff;
+        --accent-orange: #f59e0b;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        margin: 0;
+        padding: 10px;
+      }
+
+      .top-navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 5px;
+        margin-bottom: 15px;
+      }
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .badge-driver {
+        background-color: rgba(245, 158, 11, 0.15);
+        color: var(--accent-orange);
+        border: 1px solid var(--accent-orange);
+        font-size: 11px;
+        font-weight: bold;
+        padding: 3px 8px;
+        border-radius: 6px;
+        text-transform: uppercase;
+      }
+      .username {
+        font-size: 18px;
+        font-weight: 500;
+      }
+
+      .nav-tabs {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+        scrollbar-width: none;
+      }
+      .nav-tabs::-webkit-scrollbar {
+        display: none;
+      }
+
+      .tab-btn {
+        background-color: #141414;
+        color: var(--text-muted);
+        border: 1px solid var(--border-color);
+        padding: 10px 16px;
+        border-radius: 12px;
+        font-size: 13px;
+        white-space: nowrap;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .tab-btn.active {
+        background-color: var(--primary-blue);
+        color: #fff;
+        border-color: var(--primary-blue);
+      }
+
+      .form-card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 20px;
+        max-width: 480px;
+        margin: 0 auto;
+      }
+
+      h2.form-title {
+        text-align: center;
+        font-size: 26px;
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-weight: 600;
+      }
+      .section-label {
+        color: var(--primary-blue);
+        font-size: 12px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-muted);
+        font-size: 15px;
+      }
+
+      input[type="text"],
+      input[type="number"] {
+        width: 100%;
+        background-color: var(--input-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-main);
+        padding: 14px;
+        border-radius: 10px;
+        box-sizing: border-box;
+        font-size: 16px;
+      }
+
+      .toggle-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: var(--input-bg);
+        border: 1px solid var(--border-color);
+        padding: 14px;
+        border-radius: 12px;
+      }
+
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 48px;
+        height: 26px;
+      }
+
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #262626;
+        transition: 0.3s;
+        border-radius: 34px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.3s;
+        border-radius: 50%;
+      }
+
+      input:checked + .slider {
+        background-color: var(--primary-blue);
+      }
+      input:checked + .slider:before {
+        transform: translateX(22px);
+      }
+
+      .submit-btn {
+        width: 100%;
+        background-color: var(--primary-blue);
+        color: #ffffff;
+        border: none;
+        padding: 14px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 20px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-navbar">
+      <div class="user-info">
+        <span class="badge-driver">Driver</span>
+        <span class="username">tsngen</span>
+      </div>
+    </div>
+
+    <div class="nav-tabs" id="mainNavigationRow">
+      <button class="tab-btn" onclick="window.location.href = 'index.html'">
+        Log Trip
+      </button>
+      <button class="tab-btn" onclick="window.location.href = 'claim.html'">
+        Claims
+      </button>
+      <button class="tab-btn" onclick="window.location.href = 'expenses.html'">
+        Log Expense
+      </button>
+      <button class="tab-btn active" onclick="window.location.href = 'rental.html'">
+        Log Rental
+      </button>
+      <button class="tab-btn" onclick="alert('Module opening soon')">
+        Profile
+      </button>
+    </div>
+
+    <div class="form-card">
+      <h2 class="form-title">Log Rental</h2>
+      <div class="section-label">Rental Details</div>
+
+      <div class="form-group">
+        <label>Date</label>
+        <input type="text" placeholder="Select date" />
+      </div>
+
+      <div class="form-group">
+        <label>Amount (RM)</label>
+        <input type="number" placeholder="e.g. 500" />
+      </div>
+
+      <div class="form-group">
+        <label>Rental Period</label>
+        <input type="text" placeholder="e.g. 1st - 15th of July" />
+      </div>
+
+      <div class="form-group">
+        <label>Description / Notes</label>
+        <input type="text" placeholder="e.g. Weekly vehicle rental" />
+      </div>
+
+      <div class="form-group">
+        <div class="toggle-container">
+          <span
+            class="toggle-label"
+            style="color: var(--text-main); font-size: 16px"
+            >JG Claimable</span
+          >
+          <label class="switch">
+            <input type="checkbox" />
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <button class="submit-btn">Save Rental</button>
+    </div>
+  </body>
+</html>

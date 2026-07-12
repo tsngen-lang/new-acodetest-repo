@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Driver Core - JG Claims Tracker</title>
+    <style>
+      :root {
+        --bg-color: #000000;
+        --card-bg: #0a0a0a;
+        --border-color: #262626;
+        --text-main: #ffffff;
+        --text-muted: #a3a3a3;
+        --primary-blue: #0084ff;
+        --accent-orange: #f59e0b;
+        --success-green: #4ade80;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        margin: 0;
+        padding: 10px;
+      }
+
+      .top-navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 5px;
+        margin-bottom: 15px;
+      }
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .badge-driver {
+        background-color: rgba(245, 158, 11, 0.15);
+        color: var(--accent-orange);
+        border: 1px solid var(--accent-orange);
+        font-size: 11px;
+        font-weight: bold;
+        padding: 3px 8px;
+        border-radius: 6px;
+        text-transform: uppercase;
+      }
+      .username {
+        font-size: 18px;
+        font-weight: 500;
+      }
+
+      .nav-tabs {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+        scrollbar-width: none;
+      }
+      .nav-tabs::-webkit-scrollbar {
+        display: none;
+      }
+
+      .tab-btn {
+        background-color: #141414;
+        color: var(--text-muted);
+        border: 1px solid var(--border-color);
+        padding: 10px 16px;
+        border-radius: 12px;
+        font-size: 13px;
+        white-space: nowrap;
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .tab-btn.active {
+        background-color: var(--primary-blue);
+        color: #fff;
+        border-color: var(--primary-blue);
+      }
+
+      .form-card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 20px;
+        max-width: 480px;
+        margin: 0 auto;
+      }
+
+      h2.form-title {
+        text-align: center;
+        font-size: 26px;
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-weight: 600;
+      }
+      .section-label {
+        color: var(--primary-blue);
+        font-size: 12px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+      }
+
+      .history-item {
+        background: #0f0f0f;
+        border: 1px solid var(--border-color);
+        padding: 14px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        line-height: 1.5;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .history-content {
+        flex: 1;
+      }
+      .history-main-row {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+        margin-bottom: 4px;
+      }
+
+      .claim-checkbox {
+        width: 20px;
+        height: 20px;
+        margin-top: 2px;
+        accent-color: var(--primary-blue);
+        cursor: pointer;
+      }
+
+      .claims-summary-banner {
+        background-color: #0d1527;
+        border: 1px dashed var(--primary-blue);
+        padding: 14px;
+        border-radius: 12px;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .claims-summary-title {
+        font-size: 14px;
+        color: var(--text-muted);
+        font-weight: 500;
+      }
+      .claims-summary-amount {
+        font-size: 18px;
+        color: var(--primary-blue);
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-navbar">
+      <div class="user-info">
+        <span class="badge-driver">Driver</span>
+        <span class="username">tsngen</span>
+      </div>
+    </div>
+
+    <div class="nav-tabs" id="mainNavigationRow">
+      <button class="tab-btn" onclick="window.location.href = 'index.html'">
+        Log Trip
+      </button>
+      <button class="tab-btn active" onclick="window.location.href = 'claim.html'">
+        Claims
+      </button>
+      <button class="tab-btn" onclick="window.location.href = 'expenses.html'">
+        Log Expense
+      </button>
+      <button class="tab-btn" onclick="window.location.href = 'rental.html'">
+        Log Rental
+      </button>
+      <button class="tab-btn" onclick="alert('Module opening soon')">
+        Profile
+      </button>
+    </div>
+
+    <div class="form-card">
+      <h2 class="form-title">JG Claims Tracker</h2>
+
+      <div class="section-label">Selected Summary</div>
+      <div
+        class="claims-summary-banner"
+        id="claimsSummaryBanner"
+        style="display: none"
+      >
+        <span class="claims-summary-title">Total JG Claim Sum:</span>
+        <span class="claims-summary-amount"
+          >RM <span id="claimsTotalValue">0.00</span></span
+        >
+      </div>
+
+      <div class="section-label" style="margin-top: 25px">
+        Trips Staged For Claim
+      </div>
+      <div id="claimsHistorySelectionFeed"></div>
+    </div>
+
+    <script>
+      function getSavedData(key) {
+        return JSON.parse(localStorage.getItem(key)) || [];
+      }
+
+      function saveSelectionData(selectedIds) {
+        localStorage.setItem("selectedTripIds", JSON.stringify(selectedIds));
+      }
+
+      function calculateClaimTotal(trips, selectedIds) {
+        let accumulatedClaimsSum = 0;
+
+        selectedIds.forEach((id) => {
+          const match = trips.find((t) => t.id === Number(id));
+          if (match && !match.isCash) {
+            let baseFareNum = parseFloat(match.mainFare) || 0;
+            let extraClaimNum = match.extra
+              ? parseFloat(match.extra.claimJG) || 0
+              : 0;
+            accumulatedClaimsSum += baseFareNum + extraClaimNum;
+          }
+        });
+
+        const banner = document.getElementById("claimsSummaryBanner");
+        const totalField = document.getElementById("claimsTotalValue");
+
+        banner.style.display = selectedIds.length > 0 ? "flex" : "none";
+        totalField.textContent = accumulatedClaimsSum.toFixed(2);
+      }
+
+      function untoggleTripClaim(tripId) {
+        tripId = Number(tripId);
+        let selectedIds = getSavedData("selectedTripIds");
+
+        selectedIds = selectedIds.filter((id) => id !== tripId);
+        saveSelectionData(selectedIds);
+
+        renderClaimsFeed();
+      }
+
+      function renderClaimsFeed() {
+        const trips = getSavedData("savedTrips");
+        let selectedIds = getSavedData("selectedTripIds");
+        const claimsFeedContainer = document.getElementById(
+          "claimsHistorySelectionFeed",
+        );
+
+        claimsFeedContainer.innerHTML = "";
+        let stagedTripsCount = 0;
+
+        trips.forEach((t) => {
+          const isChecked = selectedIds.includes(t.id);
+
+          if (isChecked && !t.isCash) {
+            stagedTripsCount++;
+            let baseFareNum = parseFloat(t.mainFare) || 0;
+            let extraClaimNum = t.extra ? parseFloat(t.extra.claimJG) || 0 : 0;
+            let totalTripClaimFromJG = baseFareNum + extraClaimNum;
+
+            claimsFeedContainer.innerHTML += `
+                    <div class="history-item" style="border-color: #1e3a8a;">
+                        <input type="checkbox" class="claim-checkbox" checked onchange="untoggleTripClaim('${t.id}')">
+                        <div class="history-content">
+                            <div class="history-main-row">
+                                <span>${t.car} (${t.plate})</span>
+                                <span style="color:var(--primary-blue); font-size:16px; font-weight:bold;">Claim: RM ${totalTripClaimFromJG.toFixed(2)}</span>
+                            </div>
+                            <div style="color:#737373; font-size:12px;">${t.dateStr} — Loc: ${t.location}</div>
+                            <div style="color:#a3a3a3; font-size:12px; margin-top:2px;">
+                                Base: RM ${baseFareNum.toFixed(2)} ${extraClaimNum > 0 ? `+ Extra Claim: RM ${extraClaimNum.toFixed(2)}` : ""}
+                            </div>
+                        </div>
+                    </div>
+                `;
+          }
+        });
+
+        if (stagedTripsCount === 0) {
+          claimsFeedContainer.innerHTML = `
+                <div style='color:var(--text-muted); text-align:center; padding:30px 20px; font-size:14px;'>
+                    No trips staged.<br>
+                    <span style='font-size:12px;color:#525252;'>Check items off inside the "Log Trip" history view to push them here.</span>
+                </div>`;
+        }
+
+        calculateClaimTotal(trips, selectedIds);
+      }
+
+      renderClaimsFeed();
+    </script>
+  </body>
+</html>
