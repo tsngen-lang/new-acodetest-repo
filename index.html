@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Driver Core - Log Trip</title>
+    <title>Driver Core</title>
     <style>
       :root {
         --bg-color: #000000;
@@ -19,8 +19,7 @@
       }
 
       body {
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         background-color: var(--bg-color);
         color: var(--text-main);
         margin: 0;
@@ -53,6 +52,21 @@
       .username {
         font-size: 18px;
         font-weight: 500;
+      }
+      .nav-right-group {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .lang-toggle-btn {
+        background: #141414;
+        border: 1px solid var(--border-color);
+        color: var(--primary-blue);
+        padding: 6px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: bold;
       }
       .logout-btn {
         color: var(--danger-red);
@@ -174,14 +188,12 @@
       .icon-calendar {
         width: 18px;
         height: 18px;
-        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a3a3a3' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' /%3E%3C/svg%3E")
-          no-repeat center;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a3a3a3' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' /%3E%3C/svg%3E") no-repeat center;
       }
       .icon-clock {
         width: 18px;
         height: 18px;
-        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a3a3a3' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' /%3E%3C/svg%3E")
-          no-repeat center;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a3a3a3' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' /%3E%3C/svg%3E") no-repeat center;
       }
 
       /* Dynamic Chips Styling */
@@ -517,9 +529,7 @@
         font-size: 18px;
         color: var(--text-muted);
         scroll-snap-align: center;
-        transition:
-          color 0.2s,
-          font-weight 0.2s;
+        transition: color 0.2s, font-weight 0.2s;
       }
       .roller-item.selected {
         color: var(--text-main);
@@ -531,63 +541,40 @@
   <body>
     <div class="top-navbar">
       <div class="user-info">
-        <span class="badge-driver">Driver</span>
+        <span class="badge-driver" id="lang-role">DRIVER</span>
         <span class="username">tsngen</span>
       </div>
-      <a
-        href="#"
-        class="logout-btn"
-        onclick="alert('Offline execution configuration active')"
-        >Log Out</a
-      >
+      <div class="nav-right-group">
+        <button class="lang-toggle-btn" id="langToggleBtn" onclick="toggleLanguage()">廣東話</button>
+        <a href="#" class="logout-btn" id="lang-logout" onclick="alert('Offline system configuration placeholder')">Logout</a>
+      </div>
     </div>
 
     <div class="nav-tabs" id="mainNavigationRow">
-      <button
-        class="tab-btn active"
-        onclick="window.location.href = 'index.html'"
-      >
-        Log Trip
-      </button>
-      <button class="tab-btn" onclick="window.location.href = 'claim.html'">
-        Claims
-      </button>
-      <button class="tab-btn" onclick="window.location.href = 'expenses.html'">
-        Expenses
-      </button>
-      <button class="tab-btn" onclick="window.location.href = 'rental.html'">
-        Rental
-      </button>
-      <button class="tab-btn" onclick="alert('Module opening soon')">
-        Profile
-      </button>
+      <button class="tab-btn active" id="nav-log" onclick="window.location.href = 'index.html'">Log Trip</button>
+      <button class="tab-btn" id="nav-claims" onclick="window.location.href = 'claim.html'">Claims Statement</button>
+      <button class="tab-btn" id="nav-expenses" onclick="window.location.href = 'expenses.html'">Log Expenses</button>
+      <button class="tab-btn" id="nav-rental" onclick="window.location.href = 'rental.html'">Log Rental</button>
+      <button class="tab-btn" id="nav-profile" onclick="alert('Module opening soon')">Profile</button>
     </div>
 
     <div class="form-card">
       <div id="log-trip-view" class="app-view" style="display: block">
-        <h2 class="form-title" id="formHeaderTitle">Log Trip Data</h2>
-        <div class="section-label">Job Details</div>
+        <h2 class="form-title" id="lang-form-title">Log Trip Metrics</h2>
+        <div class="section-label" id="lang-sec-job">Job Details</div>
 
         <div class="form-group datetime-row">
           <div class="form-group">
-            <label>Job Commence Date</label>
-            <div
-              class="custom-picker-trigger"
-              onclick="openWheelPicker('date')"
-            >
-              <span id="dateValueDisplay">11 Jul 2026</span>
+            <label id="lang-lbl-date">Job Start Date</label>
+            <div class="custom-picker-trigger" onclick="openWheelPicker('date')">
+              <span id="dateValueDisplay">12 Jul 2026</span>
               <div class="icon-calendar"></div>
             </div>
           </div>
           <div class="form-group">
-            <label>Pickup Time</label>
-            <div
-              class="custom-picker-trigger"
-              onclick="openWheelPicker('time')"
-            >
-              <span id="timeValueDisplay" class="picker-placeholder"
-                >Set time</span
-              >
+            <label id="lang-lbl-time">Pickup Time</label>
+            <div class="custom-picker-trigger" onclick="openWheelPicker('time')">
+              <span id="timeValueDisplay" class="picker-placeholder">Set Time</span>
               <div class="icon-clock"></div>
             </div>
           </div>
@@ -595,164 +582,72 @@
 
         <div class="form-group earning-row" style="margin-top: 20px">
           <div class="form-group">
-            <label>Main Trip Fare (RM)</label>
-            <input
-              type="number"
-              id="mainFare"
-              placeholder="e.g. 150"
-              inputmode="numeric"
-            />
-            <label
-              style="
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                margin-top: 10px;
-                cursor: pointer;
-                font-size: 14px;
-                color: var(--text-main);
-              "
-            >
-              <input
-                type="checkbox"
-                id="isCashPaid"
-                style="
-                  width: 18px;
-                  height: 18px;
-                  accent-color: var(--primary-blue);
-                "
-              />
-              <span>Paid Cash by Customer (No JG Claim)</span>
+            <label id="lang-lbl-fare">Main Trip Fare (RM)</label>
+            <input type="number" id="mainFare" placeholder="e.g. 150" inputmode="numeric" />
+            <label style="display: flex; align-items: center; gap: 8px; margin-top: 10px; cursor: pointer; font-size: 14px; color: var(--text-main);">
+              <input type="checkbox" id="isCashPaid" style="width: 18px; height: 18px; accent-color: var(--primary-blue);" />
+              <span id="lang-lbl-cash">Customer paid in Cash (Exclude from Dan Ji Claim)</span>
             </label>
           </div>
         </div>
 
         <div class="form-group" style="margin-top: 20px">
-          <label>Car Type</label>
+          <label id="lang-lbl-car">Car Model</label>
           <div class="chip-group" id="carGroup">
             <div class="chip active" onclick="selectChip(this, 'carGroup')">
-              <span>Bezza</span
-              ><button
-                class="chip-remove-btn"
-                onclick="removeChip(this, event, 'carGroup')"
-              >
-                &times;
-              </button>
+              <span>Bezza</span><button class="chip-remove-btn" onclick="removeChip(this, event, 'carGroup')">&times;</button>
             </div>
             <div class="chip" onclick="selectChip(this, 'carGroup')">
-              <span>Vios</span
-              ><button
-                class="chip-remove-btn"
-                onclick="removeChip(this, event, 'carGroup')"
-              >
-                &times;
-              </button>
+              <span>Vios</span><button class="chip-remove-btn" onclick="removeChip(this, event, 'carGroup')">&times;</button>
             </div>
             <div class="chip" onclick="selectChip(this, 'carGroup')">
-              <span>Alphard</span
-              ><button
-                class="chip-remove-btn"
-                onclick="removeChip(this, event, 'carGroup')"
-              >
-                &times;
-              </button>
+              <span>Alphard</span><button class="chip-remove-btn" onclick="removeChip(this, event, 'carGroup')">&times;</button>
             </div>
             <div class="chip" onclick="selectChip(this, 'carGroup')">
-              <span>Starex</span
-              ><button
-                class="chip-remove-btn"
-                onclick="removeChip(this, event, 'carGroup')"
-              >
-                &times;
-              </button>
+              <span>Starex</span><button class="chip-remove-btn" onclick="removeChip(this, event, 'carGroup')">&times;</button>
             </div>
-            <div
-              class="chip chip-add"
-              id="addCarBtn"
-              onclick="showInlineInput('car')"
-            >
-              + Add Car Type
-            </div>
+            <div class="chip-add chip" id="addCarBtn" onclick="showInlineInput('car')">+ Add Car</div>
           </div>
           <div class="inline-add-row" id="inlineCarRow">
-            <input type="text" id="newCarInput" placeholder="Enter car type" />
-            <button class="inline-btn-add" onclick="submitInlineData('car')">
-              Add
-            </button>
-            <button class="inline-btn-cancel" onclick="hideInlineInput('car')">
-              Cancel
-            </button>
+            <input type="text" id="newCarInput" placeholder="Enter car name" />
+            <button class="inline-btn-add" id="lang-btn-addcar" onclick="submitInlineData('car')">Add</button>
+            <button class="inline-btn-cancel" id="lang-btn-cancelcar" onclick="hideInlineInput('car')">Cancel</button>
           </div>
         </div>
 
         <div class="form-group">
-          <label>Car Plate Number</label>
-          <input
-            type="text"
-            id="plateNumber"
-            value="VKE7927"
-            placeholder="Enter plate number"
-          />
+          <label id="lang-lbl-plate">Plate Number</label>
+          <input type="text" id="plateNumber" value="" placeholder="Enter plate number" />
         </div>
 
         <div class="form-group">
-          <label>Job Type</label>
+          <label id="lang-lbl-type">Job Type</label>
           <div class="chip-group" id="jobTypeGroup">
             <div class="chip active" onclick="selectChip(this, 'jobTypeGroup')">
-              <span>KL Charter</span
-              ><button
-                class="chip-remove-btn"
-                onclick="removeChip(this, event, 'jobTypeGroup')"
-              >
-                &times;
-              </button>
+              <span class="translatable-chip" data-en="KL Charter" data-zh="吉隆坡包車">KL Charter</span><button class="chip-remove-btn" onclick="removeChip(this, event, 'jobTypeGroup')">&times;</button>
             </div>
             <div class="chip" onclick="selectChip(this, 'jobTypeGroup')">
-              <span>Johor Charter</span
-              ><button
-                class="chip-remove-btn"
-                onclick="removeChip(this, event, 'jobTypeGroup')"
-              >
-                &times;
-              </button>
+              <span class="translatable-chip" data-en="JB Charter" data-zh="新山包車">JB Charter</span><button class="chip-remove-btn" onclick="removeChip(this, event, 'jobTypeGroup')">&times;</button>
             </div>
-            <div
-              class="chip chip-add"
-              id="addJobBtn"
-              onclick="showInlineInput('job')"
-            >
-              + Add Job Type
-            </div>
+            <div class="chip-add chip" id="addJobBtn" onclick="showInlineInput('job')">+ Add Job Type</div>
           </div>
           <div class="inline-add-row" id="inlineJobRow">
-            <input type="text" id="newJobInput" placeholder="Enter job type" />
-            <button class="inline-btn-add" onclick="submitInlineData('job')">
-              Add
-            </button>
-            <button class="inline-btn-cancel" onclick="hideInlineInput('job')">
-              Cancel
-            </button>
+            <input type="text" id="newJobInput" placeholder="Enter job description" />
+            <button class="inline-btn-add" id="lang-btn-addjob" onclick="submitInlineData('job')">Add</button>
+            <button class="inline-btn-cancel" id="lang-btn-canceljob" onclick="hideInlineInput('job')">Cancel</button>
           </div>
         </div>
 
         <div class="form-group">
-          <label>Pickup Location</label>
-          <input
-            type="text"
-            id="pickupLocation"
-            placeholder="Enter pickup location"
-          />
+          <label id="lang-lbl-pickup">Pickup Location</label>
+          <input type="text" id="pickupLocation" placeholder="Enter pickup location" />
         </div>
 
         <div class="form-group">
           <div class="toggle-container">
-            <span class="toggle-label">Any Extra Job?</span>
+            <span class="toggle-label" id="lang-lbl-extratoggle">Any Extra Jobs?</span>
             <label class="switch">
-              <input
-                type="checkbox"
-                id="extraJobToggle"
-                onchange="toggleExtraJobPanel(this)"
-              />
+              <input type="checkbox" id="extraJobToggle" onchange="toggleExtraJobPanel(this)" />
               <span class="slider"></span>
             </label>
           </div>
@@ -760,141 +655,236 @@
 
         <div class="conditional-section" id="extraJobPanel">
           <div class="form-group">
-            <label>Extra Job Earnings (RM)</label>
-            <input
-              type="number"
-              id="extraEarnings"
-              placeholder="e.g. 30"
-              inputmode="numeric"
-            />
+            <label id="lang-lbl-extraearn">Extra Job Earnings (RM)</label>
+            <input type="number" id="extraEarnings" placeholder="e.g. 30" inputmode="numeric" />
           </div>
           <div class="form-group">
-            <label>Claim (JG) (RM)</label>
-            <input
-              type="number"
-              id="claimJG"
-              placeholder="e.g. 20"
-              inputmode="numeric"
-            />
+            <label id="lang-lbl-extraclaim">Extra Claim Amount (Dan Ji) (RM)</label>
+            <input type="number" id="claimJG" placeholder="e.g. 20" inputmode="numeric" />
           </div>
           <div class="form-group">
-            <label>Extra Job Note</label>
-            <input
-              type="text"
-              id="extraNote"
-              placeholder="e.g. Side delivery detour"
-            />
+            <label id="lang-lbl-extranote">Extra Job Description/Note</label>
+            <input type="text" id="extraNote" placeholder="e.g. Delivery side-trip" />
           </div>
         </div>
 
-        <button class="submit-btn" id="submitFormBtn" onclick="saveTripLocal()">
-          Save Trip
-        </button>
+        <button class="submit-btn" id="submitFormBtn" onclick="saveTripLocal()">Save Trip</button>
 
-        <div
-          class="claims-summary-banner"
-          id="globalClaimsBanner"
-          style="display: none"
-        >
-          <span class="claims-summary-title"
-            >Selected Batch Claim Sum (JG):</span
-          >
-          <span class="claims-summary-amount"
-            >RM <span id="claimsTotalValueShared">0.00</span></span
-          >
+        <div class="claims-summary-banner" id="globalClaimsBanner" style="display: none">
+          <span class="claims-summary-title" id="lang-lbl-bannertitle">Total Selected for Bulk Claim (Dan Ji):</span>
+          <span class="claims-summary-amount">RM <span id="claimsTotalValueShared">0.00</span></span>
         </div>
 
         <div class="history-list" id="localHistory"></div>
       </div>
     </div>
 
-    <div
-      class="sheet-overlay"
-      id="sheetOverlay"
-      onclick="closeWheelPicker()"
-    ></div>
+    <div class="sheet-overlay" id="sheetOverlay" onclick="closeWheelPicker()"></div>
 
     <div class="bottom-sheet" id="wheelBottomSheet">
       <div class="sheet-header">
-        <span class="sheet-btn-cancel" onclick="closeWheelPicker()"
-          >Cancel</span
-        >
+        <span class="sheet-btn-cancel" id="lang-sheet-cancel" onclick="closeWheelPicker()">Cancel</span>
         <span id="sheetTitleDisplay">Select Date</span>
-        <span class="sheet-btn-done" onclick="confirmWheelSelection()"
-          >Done</span
-        >
+        <span class="sheet-btn-done" id="lang-sheet-done" onclick="confirmWheelSelection()">Done</span>
       </div>
       <div class="roller-container">
         <div class="roller-selection-box"></div>
-        <div
-          class="roller-column"
-          id="colLeft"
-          onscroll="handleColumnScroll(this)"
-        ></div>
-        <div
-          class="roller-column"
-          id="colMiddle"
-          onscroll="handleColumnScroll(this)"
-        ></div>
-        <div
-          class="roller-column"
-          id="colRight"
-          onscroll="handleColumnScroll(this)"
-        ></div>
+        <div class="roller-column" id="colLeft" onscroll="handleColumnScroll(this)"></div>
+        <div class="roller-column" id="colMiddle" onscroll="handleColumnScroll(this)"></div>
+        <div class="roller-column" id="colRight" onscroll="handleColumnScroll(this)"></div>
       </div>
     </div>
 
     <script>
-      const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
+      let currentLang = "en"; // Base Default configuration set to English
+
+      const translations = {
+        en: {
+          role: "DRIVER",
+          logout: "Logout",
+          navLog: "Log Trip",
+          navClaims: "Claims Statement",
+          navExpenses: "Log Expenses",
+          navRental: "Log Rental",
+          navProfile: "Profile",
+          formTitle: "Log Trip Metrics",
+          secJob: "Job Details",
+          lblDate: "Job Start Date",
+          lblTime: "Pickup Time",
+          lblFare: "Main Trip Fare (RM)",
+          lblCash: "Customer paid in Cash (Exclude from Dan Ji Claim)",
+          lblCar: "Car Model",
+          btnAddCar: "Add",
+          btnCancelCar: "Cancel",
+          lblPlate: "Plate Number",
+          lblType: "Job Type",
+          btnAddJob: "Add",
+          btnCancelJob: "Cancel",
+          lblPickup: "Pickup Location",
+          lblExtraToggle: "Any Extra Jobs?",
+          lblExtraEarn: "Extra Job Earnings (RM)",
+          lblExtraClaim: "Extra Claim Amount (Dan Ji) (RM)",
+          lblExtraNote: "Extra Job Description/Note",
+          btnSave: "Save Trip",
+          btnUpdate: "Update Changes",
+          headerEdit: "Modify Trip Configuration",
+          headerNew: "Log Trip Metrics",
+          bannerTitle: "Total Selected for Bulk Claim (Dan Ji):",
+          sheetDate: "Select Date",
+          sheetTime: "Select Time",
+          sheetCancel: "Cancel",
+          sheetDone: "Done",
+          placeholderTime: "Set Time",
+          historyHeader: "Saved History Logs",
+          cashBadge: "CASH PAID",
+          totalText: "Total",
+          baseText: "Base Fare",
+          extraEarnText: "Extra Earn",
+          claimText: "Claim",
+          editBtn: "Edit",
+          platePlaceholder: "Enter plate number",
+          carPlaceholder: "Enter car name",
+          jobPlaceholder: "Enter job description",
+          pickupPlaceholder: "Enter pickup location",
+          alertNoFare: "Please enter the main trip fare amount!",
+          alertSaved: "Trip logged securely!",
+          alertPlateError: "Selection Error!\n\nYou can only bulk-push trips that share the EXACT SAME plate number to the same statement batch."
+        },
+        zh: {
+          role: "司機",
+          logout: "登出",
+          navLog: "記錄行程",
+          navClaims: "報銷明細",
+          navExpenses: "記錄開支",
+          navRental: "記錄租金",
+          navProfile: "個人資料",
+          formTitle: "記錄行程數據",
+          secJob: "工作詳情",
+          lblDate: "工作開始日期",
+          lblTime: "接送時間",
+          lblFare: "主要行程車費 (RM)",
+          lblCash: "客戶現金付清 (不納入 Dan Ji 報銷)",
+          lblCar: "車型",
+          btnAddCar: "新增",
+          btnCancelCar: "取消",
+          lblPlate: "車牌號碼",
+          lblType: "工作類型",
+          btnAddJob: "新增",
+          btnCancelJob: "取消",
+          lblPickup: "接送地點",
+          lblExtraToggle: "是否有額外工作？",
+          lblExtraEarn: "額外工作收入 (RM)",
+          lblExtraClaim: "額外報銷金額 (Dan Ji) (RM)",
+          lblExtraNote: "額外工作備註說明",
+          btnSave: "儲存行程",
+          btnUpdate: "更新變更",
+          headerEdit: "修改行程配置",
+          headerNew: "記錄行程數據",
+          bannerTitle: "已選批量報銷總額 (Dan Ji):",
+          sheetDate: "選擇日期",
+          sheetTime: "選擇時間",
+          sheetCancel: "取消",
+          sheetDone: "完成",
+          placeholderTime: "設定時間",
+          historyHeader: "已記錄歷史",
+          cashBadge: "現金已付",
+          totalText: "總計",
+          baseText: "基礎費用",
+          extraEarnText: "額外收入",
+          claimText: "報銷 (Dan Ji)",
+          editBtn: "修改",
+          platePlaceholder: "請輸入車牌號碼",
+          carPlaceholder: "輸入車型名稱",
+          jobPlaceholder: "輸入工作類型",
+          pickupPlaceholder: "請輸入接送地點",
+          alertNoFare: "請輸入主要行程車費金額！",
+          alertSaved: "行程已安全儲存！",
+          alertPlateError: "選擇錯誤！\n\n您只能將具有【相同車牌號碼】的行程推送到同一個報銷批次。"
+        }
+      };
+
+      function toggleLanguage() {
+        currentLang = currentLang === "en" ? "zh" : "en";
+        const btn = document.getElementById("langToggleBtn");
+        btn.innerText = currentLang === "en" ? "廣東話" : "English";
+        applyTranslations();
+      }
+
+      function applyTranslations() {
+        const t = translations[currentLang];
+        
+        document.getElementById("lang-role").innerText = t.role;
+        document.getElementById("lang-logout").innerText = t.logout;
+        document.getElementById("nav-log").innerText = t.navLog;
+        document.getElementById("nav-claims").innerText = t.navClaims;
+        document.getElementById("nav-expenses").innerText = t.navExpenses;
+        document.getElementById("nav-rental").innerText = t.navRental;
+        document.getElementById("nav-profile").innerText = t.navProfile;
+        
+        document.getElementById("formHeaderTitle").innerText = editingTripId ? t.headerEdit : t.headerNew;
+        document.getElementById("lang-sec-job").innerText = t.secJob;
+        document.getElementById("lang-lbl-date").innerText = t.lblDate;
+        document.getElementById("lang-lbl-time").innerText = t.lblTime;
+        document.getElementById("lang-lbl-fare").innerText = t.lblFare;
+        document.getElementById("lang-lbl-cash").innerText = t.lblCash;
+        document.getElementById("lang-lbl-car").innerText = t.lblCar;
+        document.getElementById("lang-btn-addcar").innerText = t.btnAddCar;
+        document.getElementById("lang-btn-cancelcar").innerText = t.btnCancelCar;
+        document.getElementById("lang-lbl-plate").innerText = t.lblPlate;
+        document.getElementById("lang-lbl-type").innerText = t.lblType;
+        document.getElementById("lang-btn-addjob").innerText = t.btnAddJob;
+        document.getElementById("lang-btn-canceljob").innerText = t.btnCancelJob;
+        document.getElementById("lang-lbl-pickup").innerText = t.lblPickup;
+        document.getElementById("lang-lbl-extratoggle").innerText = t.lblExtraToggle;
+        document.getElementById("lang-lbl-extraearn").innerText = t.lblExtraEarn;
+        document.getElementById("lang-lbl-extaclaim").innerText = t.lblExtraClaim;
+        document.getElementById("lang-lbl-extranote").innerText = t.lblExtraNote;
+        
+        document.getElementById("submitFormBtn").innerText = editingTripId ? t.btnUpdate : t.btnSave;
+        document.getElementById("lang-lbl-bannertitle").innerText = t.bannerTitle;
+        document.getElementById("lang-sheet-cancel").innerText = t.sheetCancel;
+        document.getElementById("lang-sheet-done").innerText = t.sheetDone;
+
+        // Placeholders inputs updates
+        document.getElementById("plateNumber").placeholder = t.platePlaceholder;
+        document.getElementById("newCarInput").placeholder = t.carPlaceholder;
+        document.getElementById("newJobInput").placeholder = t.jobPlaceholder;
+        document.getElementById("pickupLocation").placeholder = t.pickupPlaceholder;
+
+        const timeField = document.getElementById("timeValueDisplay");
+        if (timeField.classList.contains("picker-placeholder")) {
+            timeField.innerText = t.placeholderTime;
+        }
+
+        // Translate the predefined inline structural chips content
+        document.querySelectorAll(".translatable-chip").forEach(chip => {
+            chip.innerText = currentLang === "en" ? chip.getAttribute("data-en") : chip.getAttribute("data-zh");
+        });
+
+        renderHistory();
+      }
+
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
       let currentPickerMode = "date";
       let editingTripId = null;
 
-      const carPlatesRegistry = {
-        bezza: "VKE7927",
-        vios: "BKE3213",
-        alphard: "WVV8888",
-        starex: "QKE9794",
-      };
+      const carPlatesRegistry = { bezza: "", vios: "", alphard: "", starex: "" };
 
-      function getSavedData(key) {
-        return JSON.parse(localStorage.getItem(key)) || [];
-      }
-
-      function saveSelectionData(selectedIds) {
-        localStorage.setItem("selectedTripIds", JSON.stringify(selectedIds));
-      }
+      function getSavedData(key) { return JSON.parse(localStorage.getItem(key)) || []; }
+      function saveSelectionData(selectedIds) { localStorage.setItem("selectedTripIds", JSON.stringify(selectedIds)); }
 
       function selectChip(element, groupId) {
         const container = document.getElementById(groupId);
-        container
-          .querySelectorAll(".chip")
-          .forEach((c) => c.classList.remove("active"));
+        container.querySelectorAll(".chip").forEach((c) => c.classList.remove("active"));
         element.classList.add("active");
 
         if (groupId === "carGroup") {
-          const carName = element
-            .querySelector("span")
-            .innerText.trim()
-            .toLowerCase();
+          const carName = element.querySelector("span").innerText.trim().toLowerCase();
           const plateInput = document.getElementById("plateNumber");
           if (carPlatesRegistry[carName]) {
             plateInput.value = carPlatesRegistry[carName];
           } else if (!editingTripId) {
             plateInput.value = "";
-            plateInput.placeholder = "Enter custom plate number";
           }
         }
       }
@@ -939,18 +929,14 @@
       function createNewChipMarkup(value, groupId) {
         const newChip = document.createElement("div");
         newChip.className = "chip";
-        newChip.onclick = function () {
-          selectChip(this, groupId);
-        };
+        newChip.onclick = function () { selectChip(this, groupId); };
         const textSpan = document.createElement("span");
         textSpan.innerText = value;
         newChip.appendChild(textSpan);
         const removeBtn = document.createElement("button");
         removeBtn.className = "chip-remove-btn";
         removeBtn.innerHTML = "&times;";
-        removeBtn.onclick = function (e) {
-          removeChip(this, e, groupId);
-        };
+        removeBtn.onclick = function (e) { removeChip(this, e, groupId); };
         newChip.appendChild(removeBtn);
         return newChip;
       }
@@ -1009,9 +995,7 @@
         items.forEach((item, idx) => {
           if (item.innerText === String(value)) targetIndex = idx;
         });
-        setTimeout(() => {
-          columnElement.scrollTop = targetIndex * 40;
-        }, 10);
+        setTimeout(() => { columnElement.scrollTop = targetIndex * 40; }, 10);
       }
 
       function openWheelPicker(mode) {
@@ -1022,22 +1006,20 @@
         document.getElementById("sheetOverlay").style.display = "block";
         document.getElementById("wheelBottomSheet").classList.add("open");
 
+        const t = translations[currentLang];
+
         if (mode === "date") {
-          document.getElementById("sheetTitleDisplay").innerText =
-            "Job Commence Date";
+          document.getElementById("sheetTitleDisplay").innerText = t.sheetDate;
           rightCol.style.display = "block";
           populateWheel(leftCol, 1, 31, (i) => String(i).padStart(2, "0"));
           populateWheel(middleCol, 0, 11, (i) => months[i]);
           populateWheel(rightCol, 2025, 2030);
-          const currentDisplay = document
-            .getElementById("dateValueDisplay")
-            .innerText.split(" ");
-          scrollToValue(leftCol, currentDisplay[0] || "11");
+          const currentDisplay = document.getElementById("dateValueDisplay").innerText.split(" ");
+          scrollToValue(leftCol, currentDisplay[0] || "12");
           scrollToValue(middleCol, currentDisplay[1] || "Jul");
           scrollToValue(rightCol, currentDisplay[2] || "2026");
         } else {
-          document.getElementById("sheetTitleDisplay").innerText =
-            "Pickup Time";
+          document.getElementById("sheetTitleDisplay").innerText = t.sheetTime;
           rightCol.style.display = "none";
           populateWheel(leftCol, 0, 23, (i) => String(i).padStart(2, "0"));
           populateWheel(middleCol, 0, 59, (i) => String(i).padStart(2, "0"));
@@ -1059,18 +1041,11 @@
       }
 
       function confirmWheelSelection() {
-        const leftVal =
-          document.querySelector("#colLeft .roller-item.selected")?.innerText ||
-          "00";
-        const middleVal =
-          document.querySelector("#colMiddle .roller-item.selected")
-            ?.innerText || "00";
+        const leftVal = document.querySelector("#colLeft .roller-item.selected")?.innerText || "00";
+        const middleVal = document.querySelector("#colMiddle .roller-item.selected")?.innerText || "00";
         if (currentPickerMode === "date") {
-          const rightVal =
-            document.querySelector("#colRight .roller-item.selected")
-              ?.innerText || "2026";
-          document.getElementById("dateValueDisplay").innerText =
-            `${leftVal} ${middleVal} ${rightVal}`;
+          const rightVal = document.querySelector("#colRight .roller-item.selected")?.innerText || "2026";
+          document.getElementById("dateValueDisplay").innerText = `${leftVal} ${middleVal} ${rightVal}`;
         } else {
           const displayField = document.getElementById("timeValueDisplay");
           displayField.innerText = `${leftVal}:${middleVal}`;
@@ -1088,9 +1063,7 @@
           const match = trips.find((t) => t.id === Number(id));
           if (match && !match.isCash) {
             let baseFareNum = parseFloat(match.mainFare) || 0;
-            let extraClaimNum = match.extra
-              ? parseFloat(match.extra.claimJG) || 0
-              : 0;
+            let extraClaimNum = match.extra ? parseFloat(match.extra.claimJG) || 0 : 0;
             accumulatedClaimsSum += baseFareNum + extraClaimNum;
           }
         });
@@ -1105,6 +1078,7 @@
       function toggleTripSelection(checkbox, tripId, plateNumber) {
         tripId = Number(tripId);
         let selectedTripIds = getSavedData("selectedTripIds");
+        const t = translations[currentLang];
 
         if (checkbox.checked) {
           const trips = getSavedData("savedTrips");
@@ -1117,9 +1091,7 @@
           });
 
           if (activePlates.length > 0 && !activePlates.includes(plateNumber)) {
-            alert(
-              `Selection Error!\n\nYou can only push items with the SAME Plate Number to the claim batch.\nStaged Batch Plate: ${activePlates[0]}\nSelected Car Plate: ${plateNumber}`,
-            );
+            alert(currentLang === "en" ? `${t.alertPlateError}\nActive Batch: ${activePlates[0]}\nNew Trip: ${plateNumber}` : `${t.alertPlateError}\n目前批次車牌: ${activePlates[0]}\n新選行程車牌: ${plateNumber}`);
             checkbox.checked = false;
             return;
           }
@@ -1136,30 +1108,33 @@
       function saveTripLocal() {
         const dateStr = document.getElementById("dateValueDisplay").innerText;
         const timeField = document.getElementById("timeValueDisplay");
-        const timeStr = timeField.classList.contains("picker-placeholder")
-          ? "Not Set"
-          : timeField.innerText;
+        const t = translations[currentLang];
+        const placeholderLabel = currentLang === "en" ? "Not Set" : "未設定";
+        const timeStr = timeField.classList.contains("picker-placeholder") ? placeholderLabel : timeField.innerText;
+        
         const mainFare = document.getElementById("mainFare").value;
         const isCashPaid = document.getElementById("isCashPaid").checked;
-        const plate = document.getElementById("plateNumber").value;
-        const loc =
-          document.getElementById("pickupLocation").value || "Not Specified";
+        const plate = document.getElementById("plateNumber").value || (currentLang === "en" ? "No Plate" : "無車牌");
+        const loc = document.getElementById("pickupLocation").value || (currentLang === "en" ? "Unspecified Location" : "未指定地點");
         const hasExtra = document.getElementById("extraJobToggle").checked;
         const extraAmt = document.getElementById("extraEarnings").value || 0;
         const claimAmt = document.getElementById("claimJG").value || 0;
         const extraMsg = document.getElementById("extraNote").value || "";
 
         if (!mainFare) {
-          alert("Please enter your Main Trip Fare amount!");
+          alert(t.alertNoFare);
           return;
         }
 
-        const activeCar =
-          document.querySelector("#carGroup .chip.active span")?.innerText ||
-          "None";
-        const activeJobType =
-          document.querySelector("#jobTypeGroup .chip.active span")
-            ?.innerText || "None";
+        const activeCar = document.querySelector("#carGroup .chip.active span")?.innerText || (currentLang === "en" ? "No Car" : "無車型");
+        
+        // Use logic data attribute if translatable element chip structure exists
+        const typeTarget = document.querySelector("#jobTypeGroup .chip.active span");
+        let activeJobType = typeTarget?.innerText || (currentLang === "en" ? "No Type" : "無類型");
+        if(typeTarget && typeTarget.classList.contains("translatable-chip")) {
+             activeJobType = currentLang === "en" ? typeTarget.getAttribute("data-en") : typeTarget.getAttribute("data-zh");
+        }
+
         let trips = getSavedData("savedTrips");
 
         const tripData = {
@@ -1172,21 +1147,18 @@
           plate: plate,
           type: activeJobType,
           location: loc,
-          extra: hasExtra
-            ? {
+          extra: hasExtra ? {
                 amount: parseFloat(extraAmt).toFixed(2),
                 claimJG: parseFloat(claimAmt).toFixed(2),
                 note: extraMsg,
-              }
-            : null,
+              } : null,
         };
 
         if (editingTripId) {
           trips = trips.map((t) => (t.id === editingTripId ? tripData : t));
           editingTripId = null;
-          document.getElementById("formHeaderTitle").innerText =
-            "Log Trip Data";
-          document.getElementById("submitFormBtn").innerText = "Save Trip";
+          document.getElementById("formHeaderTitle").innerText = t.formTitle;
+          document.getElementById("submitFormBtn").innerText = t.btnSave;
         } else {
           trips.unshift(tripData);
         }
@@ -1196,16 +1168,18 @@
         document.getElementById("mainFare").value = "";
         document.getElementById("isCashPaid").checked = false;
         document.getElementById("pickupLocation").value = "";
+        document.getElementById("plateNumber").value = "";
         document.getElementById("extraJobToggle").checked = false;
         toggleExtraJobPanel(document.getElementById("extraJobToggle"));
-        timeField.innerText = "Set time";
+        
+        timeField.innerText = t.placeholderTime;
         timeField.classList.add("picker-placeholder");
 
         const bezzaChip = document.querySelector("#carGroup .chip");
         if (bezzaChip) selectChip(bezzaChip, "carGroup");
 
         renderHistory();
-        alert("Trip securely saved!");
+        alert(t.alertSaved);
       }
 
       function editTrip(id) {
@@ -1213,15 +1187,16 @@
         const target = trips.find((t) => t.id === id);
         if (!target) return;
 
+        const t = translations[currentLang];
         editingTripId = id;
-        document.getElementById("formHeaderTitle").innerText =
-          "Edit Trip Configuration";
-        document.getElementById("submitFormBtn").innerText = "Update Changes";
+        
+        document.getElementById("formHeaderTitle").innerText = t.headerEdit;
+        document.getElementById("submitFormBtn").innerText = t.btnUpdate;
         document.getElementById("dateValueDisplay").innerText = target.dateStr;
 
         const timeField = document.getElementById("timeValueDisplay");
-        if (target.timeStr === "Not Set") {
-          timeField.innerText = "Set time";
+        if (target.timeStr === "未設定" || target.timeStr === "Not Set") {
+          timeField.innerText = t.placeholderTime;
           timeField.classList.add("picker-placeholder");
         } else {
           timeField.innerText = target.timeStr;
@@ -1230,38 +1205,36 @@
 
         document.getElementById("mainFare").value = target.mainFare;
         document.getElementById("isCashPaid").checked = target.isCash || false;
-        document.getElementById("pickupLocation").value =
-          target.location === "Not Specified" ? "" : target.location;
+        
+        const isDefaultLoc = (target.location === "未指定地點" || target.location === "Unspecified Location");
+        document.getElementById("pickupLocation").value = isDefaultLoc ? "" : target.location;
 
         const carGroup = document.getElementById("carGroup");
-        let carChipFound = Array.from(
-          carGroup.querySelectorAll(".chip span"),
-        ).find((s) => s.innerText === target.car);
-        if (!carChipFound && target.car !== "None") {
+        let carChipFound = Array.from(carGroup.querySelectorAll(".chip span")).find((s) => s.innerText === target.car);
+        if (!carChipFound && target.car !== "無車型" && target.car !== "No Car") {
           const addedChip = createNewChipMarkup(target.car, "carGroup");
-          carGroup.insertBefore(
-            addedChip,
-            document.getElementById("addCarBtn"),
-          );
+          carGroup.insertBefore(addedChip, document.getElementById("addCarBtn"));
           carChipFound = addedChip.querySelector("span");
         }
         if (carChipFound) selectChip(carChipFound.parentElement, "carGroup");
-        document.getElementById("plateNumber").value = target.plate;
+        
+        const isDefaultPlate = (target.plate === "無車牌" || target.plate === "No Plate");
+        document.getElementById("plateNumber").value = isDefaultPlate ? "" : target.plate;
 
         const jobGroup = document.getElementById("jobTypeGroup");
-        let jobChipFound = Array.from(
-          jobGroup.querySelectorAll(".chip span"),
-        ).find((s) => s.innerText === target.type);
-        if (!jobChipFound && target.type !== "None") {
+        let jobChipFound = Array.from(jobGroup.querySelectorAll(".chip span")).find((s) => {
+             if(s.classList.contains("translatable-chip")) {
+                 return s.getAttribute("data-en") === target.type || s.getAttribute("data-zh") === target.type;
+             }
+             return s.innerText === target.type;
+        });
+        
+        if (!jobChipFound && target.type !== "無類型" && target.type !== "No Type") {
           const addedChip = createNewChipMarkup(target.type, "jobTypeGroup");
-          jobGroup.insertBefore(
-            addedChip,
-            document.getElementById("addJobBtn"),
-          );
+          jobGroup.insertBefore(addedChip, document.getElementById("addJobBtn"));
           jobChipFound = addedChip.querySelector("span");
         }
-        if (jobChipFound)
-          selectChip(jobChipFound.parentElement, "jobTypeGroup");
+        if (jobChipFound) selectChip(jobChipFound.parentElement, "jobTypeGroup");
 
         const toggle = document.getElementById("extraJobToggle");
         if (target.extra) {
@@ -1282,6 +1255,7 @@
         const trips = getSavedData("savedTrips");
         let selectedTripIds = getSavedData("selectedTripIds");
         const logFeedContainer = document.getElementById("localHistory");
+        const t = translations[currentLang];
 
         if (trips.length === 0) {
           logFeedContainer.innerHTML = "";
@@ -1289,45 +1263,63 @@
           return;
         }
 
-        logFeedContainer.innerHTML =
-          "<h3 style='font-size:16px; border-bottom:1px solid #262626; padding-bottom:5px; margin-top:25px; color:var(--primary-blue);'>Logged History</h3>";
+        logFeedContainer.innerHTML = `<h3 style='font-size:16px; border-bottom:1px solid #262626; padding-bottom:5px; margin-top:25px; color:var(--primary-blue);'>${t.historyHeader}</h3>`;
 
-        trips.forEach((t) => {
-          let baseFareNum = parseFloat(t.mainFare) || 0;
-          let extraAmountNum = t.extra ? parseFloat(t.extra.amount) || 0 : 0;
-          let extraClaimNum = t.extra ? parseFloat(t.extra.claimJG) || 0 : 0;
-
+        trips.forEach((tData) => {
+          let baseFareNum = parseFloat(tData.mainFare) || 0;
+          let extraAmountNum = tData.extra ? parseFloat(tData.extra.amount) || 0 : 0;
+          let extraClaimNum = tData.extra ? parseFloat(tData.extra.claimJG) || 0 : 0;
           let totalTripEarnings = baseFareNum + extraAmountNum + extraClaimNum;
 
+          // Normalize structural dynamic data output fields based on UI state
+          let activeDisplayCar = tData.car;
+          let activeDisplayType = tData.type;
+          let activeDisplayLocation = tData.location;
+          let activeDisplayPlate = tData.plate;
+
+          if (currentLang === "en") {
+              if (activeDisplayCar === "無車型") activeDisplayCar = "No Car";
+              if (activeDisplayType === "吉隆坡包車") activeDisplayType = "KL Charter";
+              if (activeDisplayType === "新山包車") activeDisplayType = "JB Charter";
+              if (activeDisplayType === "無類型") activeDisplayType = "No Type";
+              if (activeDisplayLocation === "未指定地點") activeDisplayLocation = "Unspecified Location";
+              if (activeDisplayPlate === "無車牌") activeDisplayPlate = "No Plate";
+          } else {
+              if (activeDisplayCar === "No Car") activeDisplayCar = "無車型";
+              if (activeDisplayType === "KL Charter") activeDisplayType = "吉隆坡包車";
+              if (activeDisplayType === "JB Charter") activeDisplayType = "新山包車";
+              if (activeDisplayType === "No Type") activeDisplayType = "無類型";
+              if (activeDisplayLocation === "Unspecified Location") activeDisplayLocation = "未指定地點";
+              if (activeDisplayPlate === "No Plate") activeDisplayPlate = "無車牌";
+          }
+
           let extraBlockHtml = "";
-          if (t.extra) {
+          if (tData.extra) {
             extraBlockHtml = `
                     <div style="color:var(--accent-orange); font-size:13px; margin-top:4px;">
-                        + Extra Earning: RM ${t.extra.amount} 
-                        ${t.isCash ? `<span style="color:#737373;">| <del>Claim (JG): RM ${t.extra.claimJG}</del></span>` : `| Claim (JG): RM ${extraClaimNum.toFixed(2)}`}
-                        ${t.extra.note ? `(${t.extra.note})` : ""}
+                        + ${t.extraEarnText}: RM ${tData.extra.amount} 
+                        ${tData.isCash ? `<span style="color:#737373;">| <del>${t.claimText}: RM ${tData.extra.claimJG}</del></span>` : `| ${t.claimText}: RM ${extraClaimNum.toFixed(2)}`}
+                        ${tData.extra.note ? `(${tData.extra.note})` : ""}
                     </div>`;
           }
 
-          const isChecked = selectedTripIds.includes(t.id);
-          const cashBadge = t.isCash
-            ? `<span class="badge-cash-tag">Cash Paid</span>`
-            : "";
+          const isChecked = selectedTripIds.includes(tData.id);
+          const cashBadge = tData.isCash ? `<span class="badge-cash-tag">${t.cashBadge}</span>` : "";
 
           logFeedContainer.innerHTML += `
-                <div class="history-item" style="${t.isCash ? "border-color: rgba(239, 68, 68, 0.4);" : ""}">
-                    <input type="checkbox" class="claim-checkbox" ${t.isCash ? "disabled" : ""} ${isChecked ? "checked" : ""} onchange="toggleTripSelection(this, '${t.id}', '${t.plate}')">
+                <div class="history-item" style="${tData.isCash ? "border-color: rgba(239, 68, 68, 0.4);" : ""}">
+                    <input type="checkbox" class="claim-checkbox" ${tData.isCash ? "disabled" : ""} ${isChecked ? "checked" : ""} onchange="toggleTripSelection(this, '${tData.id}', '${tData.plate}')">
                     <div class="history-content">
                         <div class="history-actions">
-                            <button class="edit-btn" onclick="editTrip(${t.id})">Edit</button>
+                            <button class="edit-btn" onclick="editTrip(${tData.id})">${t.editBtn}</button>
                         </div>
                         <div class="history-main-row">
-                            <span>${t.car} (${t.plate}) ${cashBadge}</span>
-                            <span class="history-fare">Total: RM ${totalTripEarnings.toFixed(2)}</span>
+                            <span>${activeDisplayCar} (${activeDisplayPlate}) ${cashBadge}</span>
+                            <span class="history-fare">${t.totalText}: RM ${totalTripEarnings.toFixed(2)}</span>
                         </div>
-                        <div style="color:#737373; font-size:12px; margin-bottom:4px;">${t.dateStr} @ ${t.timeStr} — Type: ${t.type}</div>
-                        <div style="color:#a3a3a3;">Loc: ${t.location}</div>
-                        <div style="color:#a3a3a3; font-size:13px;">Base Fare: RM ${t.mainFare} ${t.isCash ? "(Paid Cash)" : ""}</div>
+                        <div style="color:#737373; font-size:12px; margin-bottom:4px;">${tData.dateStr} @ ${tData.timeStr} — Type: ${activeDisplayType}</div>
+                        <div style="color:#a3a3a3;">Loc: ${activeDisplayLocation}</div>
+                        <div style="color:#a3a3a3; font-size:13px;">${t.baseText}: RM ${tData.mainFare} ${tData.isCash ? `(${t.cashBadge})` : ""}</div>
                         ${extraBlockHtml}
                     </div>
                 </div>
@@ -1337,7 +1329,8 @@
         calculateClaimTotal();
       }
 
-      renderHistory();
+      // Initialize default view logic language mapping bindings
+      applyTranslations();
     </script>
   </body>
 </html>
