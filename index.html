@@ -660,7 +660,7 @@
           </div>
           <div class="form-group">
             <label id="lang-lbl-extraclaim">Extra Claim Amount (Dan Ji) (RM)</label>
-            <input type="number" id="claimJG" placeholder="e.g. 20" inputmode="numeric" />
+            <input type="number" id="extraEarningsClaim" placeholder="e.g. 20" inputmode="numeric" />
           </div>
           <div class="form-group">
             <label id="lang-lbl-extranote">Extra Job Description/Note</label>
@@ -821,7 +821,7 @@
         document.getElementById("nav-rental").innerText = t.navRental;
         document.getElementById("nav-profile").innerText = t.navProfile;
         
-        document.getElementById("formHeaderTitle").innerText = editingTripId ? t.headerEdit : t.headerNew;
+        document.getElementById("lang-form-title").innerText = editingTripId ? t.headerEdit : t.headerNew;
         document.getElementById("lang-sec-job").innerText = t.secJob;
         document.getElementById("lang-lbl-date").innerText = t.lblDate;
         document.getElementById("lang-lbl-time").innerText = t.lblTime;
@@ -837,7 +837,7 @@
         document.getElementById("lang-lbl-pickup").innerText = t.lblPickup;
         document.getElementById("lang-lbl-extratoggle").innerText = t.lblExtraToggle;
         document.getElementById("lang-lbl-extraearn").innerText = t.lblExtraEarn;
-        document.getElementById("lang-lbl-extaclaim").innerText = t.lblExtraClaim;
+        document.getElementById("lang-lbl-extraclaim").innerText = t.lblExtraClaim;
         document.getElementById("lang-lbl-extranote").innerText = t.lblExtraNote;
         
         document.getElementById("submitFormBtn").innerText = editingTripId ? t.btnUpdate : t.btnSave;
@@ -965,7 +965,7 @@
         panel.style.display = toggleInput.checked ? "block" : "none";
         if (!toggleInput.checked) {
           document.getElementById("extraEarnings").value = "";
-          document.getElementById("claimJG").value = "";
+          document.getElementById("extraEarningsClaim").value = "";
           document.getElementById("extraNote").value = "";
         }
       }
@@ -1118,7 +1118,7 @@
         const loc = document.getElementById("pickupLocation").value || (currentLang === "en" ? "Unspecified Location" : "未指定地點");
         const hasExtra = document.getElementById("extraJobToggle").checked;
         const extraAmt = document.getElementById("extraEarnings").value || 0;
-        const claimAmt = document.getElementById("claimJG").value || 0;
+        const claimAmt = document.getElementById("extraEarningsClaim").value || 0;
         const extraMsg = document.getElementById("extraNote").value || "";
 
         if (!mainFare) {
@@ -1157,7 +1157,7 @@
         if (editingTripId) {
           trips = trips.map((t) => (t.id === editingTripId ? tripData : t));
           editingTripId = null;
-          document.getElementById("formHeaderTitle").innerText = t.formTitle;
+          document.getElementById("lang-form-title").innerText = t.formTitle;
           document.getElementById("submitFormBtn").innerText = t.btnSave;
         } else {
           trips.unshift(tripData);
@@ -1190,7 +1190,7 @@
         const t = translations[currentLang];
         editingTripId = id;
         
-        document.getElementById("formHeaderTitle").innerText = t.headerEdit;
+        document.getElementById("lang-form-title").innerText = t.headerEdit;
         document.getElementById("submitFormBtn").innerText = t.btnUpdate;
         document.getElementById("dateValueDisplay").innerText = target.dateStr;
 
@@ -1241,7 +1241,7 @@
           toggle.checked = true;
           toggleExtraJobPanel(toggle);
           document.getElementById("extraEarnings").value = target.extra.amount;
-          document.getElementById("claimJG").value = target.extra.claimJG || "";
+          document.getElementById("extraEarningsClaim").value = target.extra.claimJG || "";
           document.getElementById("extraNote").value = target.extra.note;
         } else {
           toggle.checked = false;
