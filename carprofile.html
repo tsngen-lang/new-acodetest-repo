@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vehicle Profiles</title>
+    <style>
+      :root {
+        --bg-color: #000000;
+        --card-bg: #0a0a0a;
+        --input-bg: #141414;
+        --border-color: #262626;
+        --text-main: #ffffff;
+        --text-muted: #a3a3a3;
+        --primary-blue: #0084ff;
+        --primary-blue-hover: #0066cc;
+        --accent-orange: #f59e0b;
+        --danger-red: #ef4444;
+        --success-green: #4ade80;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-main);
+        margin: 0;
+        padding: 10px;
+      }
+
+      .top-navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 5px;
+        margin-bottom: 15px;
+      }
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .badge-driver {
+        background-color: rgba(245, 158, 11, 0.15);
+        color: var(--accent-orange);
+        border: 1px solid var(--accent-orange);
+        font-size: 11px;
+        font-weight: bold;
+        padding: 3px 8px;
+        border-radius: 6px;
+        text-transform: uppercase;
+      }
+      .username {
+        font-size: 18px;
+        font-weight: 500;
+      }
+      .lang-toggle-btn {
+        background: #141414;
+        border: 1px solid var(--border-color);
+        color: var(--primary-blue);
+        padding: 6px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: bold;
+        transition: background 0.2s;
+      }
+      .lang-toggle-btn:hover {
+        background: #1f1f1f;
+      }
+
+      .nav-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 15px;
+      }
+      .tab-btn {
+        background-color: #141414;
+        color: var(--text-muted);
+        border: 1px solid var(--border-color);
+        padding: 10px 16px;
+        border-radius: 12px;
+        font-size: 13px;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .tab-btn:hover {
+        color: var(--text-main);
+        border-color: #404040;
+      }
+      .tab-btn.active {
+        background-color: var(--primary-blue);
+        color: #fff;
+        border-color: var(--primary-blue);
+      }
+
+      .form-card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        padding: 20px;
+        max-width: 480px;
+        margin: 0 auto;
+      }
+
+      h2.form-title {
+        text-align: center;
+        font-size: 26px;
+        margin-top: 0;
+        margin-bottom: 20px;
+        font-weight: 600;
+      }
+      .section-label {
+        color: var(--primary-blue);
+        font-size: 12px;
+        font-weight: bold;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+      }
+      .form-group {
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--text-muted);
+        font-size: 15px;
+      }
+
+      input[type="text"],
+      input[type="date"],
+      select {
+        width: 100%;
+        background-color: var(--input-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-main);
+        padding: 14px;
+        border-radius: 10px;
+        box-sizing: border-box;
+        font-size: 16px;
+        transition: border-color 0.2s;
+      }
+      input[type="text"]:focus,
+      input[type="date"]:focus,
+      select:focus {
+        outline: none;
+        border-color: var(--primary-blue);
+      }
+      select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a3a3a3'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        background-size: 16px;
+      }
+      input::placeholder {
+        color: #525252;
+      }
+
+      .hint-text {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 6px;
+        display: block;
+        line-height: 1.4;
+      }
+
+      .submit-btn {
+        width: 100%;
+        background-color: var(--primary-blue);
+        color: #ffffff;
+        border: none;
+        padding: 14px;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 10px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      .submit-btn:hover {
+        background-color: var(--primary-blue-hover);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-navbar">
+      <div class="user-info">
+        <span class="badge-driver" id="lang-role">DRIVER</span>
+        <span class="username">tsngen</span>
+      </div>
+      <div class="nav-right-group">
+        <button
+          class="lang-toggle-btn"
+          id="langToggleBtn"
+          onclick="toggleLanguage()"
+        >
+          廣東話
+        </button>
+      </div>
+    </div>
+
+    <div class="nav-tabs">
+      <button class="tab-btn" onclick="window.location.href = 'index.html'">
+        Log Trip
+      </button>
+      <button class="tab-btn active" id="nav-profile">Profile</button>
+    </div>
+
+    <div class="form-card">
+      <h2 class="form-title" id="lang-title">Vehicle Profiles</h2>
+      <div class="section-label" id="lang-sec">Configuration Setup</div>
+
+      <form id="vehicleProfileForm" onsubmit="saveVehicleProfile(event)">
+        <div class="form-group">
+          <label id="lang-lbl-car">Car Model / Type</label>
+          <input
+            type="text"
+            id="carType"
+            placeholder="e.g. Perodua Bezza"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label id="lang-lbl-plate">Car Plate Number</label>
+          <input
+            type="text"
+            id="plateNumber"
+            placeholder="e.g. VAA 1234"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label id="lang-lbl-arrange">JG Pay Arrangement Condition</label>
+          <select id="arrangementType" required>
+            <option value="Rental">Car Rental Condition (Deduct Rental)</option>
+            <option value="ProfitSharing">
+              Profit Sharing Condition (7/3 Split Framework)
+            </option>
+          </select>
+          <span class="hint-text" id="lang-hint-arrange"
+            >Dictates financial calculator layout processing settings
+            dynamically.</span
+          >
+        </div>
+
+        <div class="form-group">
+          <label id="lang-lbl-roadtax">Road Tax Expiry Date (Optional)</label>
+          <input type="date" id="roadTax" />
+        </div>
+
+        <div class="form-group">
+          <label id="lang-lbl-insurance"
+            >Insurance Expiry Date (Optional)</label
+          >
+          <input type="date" id="insurance" />
+        </div>
+
+        <button type="submit" class="submit-btn" id="lang-btn-save">
+          Save Car Profile
+        </button>
+      </form>
+    </div>
+
+    <script>
+      let currentLang = localStorage.getItem("preferredLanguage") || "en";
+
+      const translations = {
+        en: {
+          role: "DRIVER",
+          navProfile: "Profile",
+          title: "Vehicle Profiles",
+          sec: "Configuration Setup",
+          lblCar: "Car Model / Type",
+          lblPlate: "Car Plate Number",
+          lblArrange: "JG Pay Arrangement Condition",
+          hintArrange:
+            "Dictates financial calculator layout processing settings dynamically.",
+          lblRoadTax: "Road Tax Expiry Date (Optional)",
+          lblInsurance: "Insurance Expiry Date (Optional)",
+          btnSave: "Save Car Profile",
+          alertSuccess: "Vehicle registered successfully into tracking module!",
+          optRental: "Car Rental Condition (Deduct Rental)",
+          optShare: "Profit Sharing Condition (7/3 Split Framework)",
+        },
+        zh: {
+          role: "司機",
+          navProfile: "個人資料",
+          title: "車輛描述設定",
+          sec: "配置管理項目",
+          lblCar: "車型名稱",
+          lblPlate: "車牌號碼",
+          lblArrange: "丹吉結算安排體制",
+          hintArrange: "系統會自動根據此選項變更報銷對賬單的公式與佈局結構。",
+          lblRoadTax: "路稅到期日 (選填)",
+          lblInsurance: "車險到期日 (選填)",
+          btnSave: "儲存車輛配置",
+          alertSuccess: "車輛描述文件配置儲存完畢！",
+          optRental: "租車模式條件 (扣除固定租金)",
+          optShare: "利潤分成模式條件 (7/3 分賬架構)",
+        },
+      };
+
+      function toggleLanguage() {
+        currentLang = currentLang === "en" ? "zh" : "en";
+        localStorage.setItem("preferredLanguage", currentLang);
+        updateToggleBtnText();
+        applyTranslations();
+      }
+
+      function updateToggleBtnText() {
+        const btn = document.getElementById("langToggleBtn");
+        if (btn) btn.innerText = currentLang === "en" ? "廣東話" : "English";
+      }
+
+      function applyTranslations() {
+        const t = translations[currentLang];
+        document.getElementById("lang-role").innerText = t.role;
+        document.getElementById("nav-profile").innerText = t.navProfile;
+        document.getElementById("lang-title").innerText = t.title;
+        document.getElementById("lang-sec").innerText = t.sec;
+        document.getElementById("lang-lbl-car").innerText = t.lblCar;
+        document.getElementById("lang-lbl-plate").innerText = t.lblPlate;
+        document.getElementById("lang-lbl-arrange").innerText = t.lblArrange;
+        document.getElementById("lang-hint-arrange").innerText = t.hintArrange;
+        document.getElementById("lang-lbl-roadtax").innerText = t.lblRoadTax;
+        document.getElementById("lang-lbl-insurance").innerText =
+          t.lblInsurance;
+        document.getElementById("lang-btn-save").innerText = t.btnSave;
+
+        const select = document.getElementById("arrangementType");
+        select.options[0].text = t.optRental;
+        select.options[1].text = t.optShare;
+      }
+
+      // New Function: Load the latest saved profile back into the form fields
+      function loadVehicleProfile() {
+        const carProfiles =
+          JSON.parse(localStorage.getItem("carProfiles")) || [];
+        if (carProfiles.length > 0) {
+          // Grab the most recently saved or updated profile
+          const currentProfile = carProfiles[carProfiles.length - 1];
+
+          document.getElementById("carType").value =
+            currentProfile.carType || "";
+          document.getElementById("plateNumber").value =
+            currentProfile.plateNumber || "";
+          document.getElementById("arrangementType").value =
+            currentProfile.arrangementType || "Rental";
+
+          // Clear standard placeholder strings out if it equals 'N/A' to make editing friendly
+          document.getElementById("roadTax").value =
+            currentProfile.roadTax === "N/A" ? "" : currentProfile.roadTax;
+          document.getElementById("insurance").value =
+            currentProfile.insurance === "N/A" ? "" : currentProfile.insurance;
+        }
+      }
+
+      function saveVehicleProfile(e) {
+        e.preventDefault();
+
+        const carProfiles =
+          JSON.parse(localStorage.getItem("carProfiles")) || [];
+
+        const newProfile = {
+          carType: document.getElementById("carType").value.trim(),
+          plateNumber: document
+            .getElementById("plateNumber")
+            .value.trim()
+            .toUpperCase(),
+          arrangementType: document.getElementById("arrangementType").value,
+          roadTax: document.getElementById("roadTax").value || "N/A",
+          insurance: document.getElementById("insurance").value || "N/A",
+        };
+
+        const existingIdx = carProfiles.findIndex(
+          (p) => p.plateNumber === newProfile.plateNumber,
+        );
+        if (existingIdx > -1) {
+          carProfiles[existingIdx] = newProfile;
+        } else {
+          carProfiles.push(newProfile);
+        }
+
+        localStorage.setItem("carProfiles", JSON.stringify(carProfiles));
+        alert(translations[currentLang].alertSuccess);
+
+        window.location.href = "index.html";
+      }
+
+      // Initialize page details on load
+      updateToggleBtnText();
+      applyTranslations();
+      loadVehicleProfile();
+    </script>
+  </body>
+</html>
