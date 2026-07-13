@@ -7,13 +7,16 @@
     <style>
       :root {
         --bg-color: #000000;
-        --card-bg: #0a0a0a;
+        --card-bg: #0d0d0d;
         --input-bg: #141414;
         --border-color: #262626;
         --text-main: #ffffff;
         --text-muted: #a3a3a3;
         --primary-blue: #0084ff;
         --accent-orange: #f59e0b;
+        --danger-red: #ef4444;
+        --success-green: #22c55e;
+        --chip-unselected: #1c1c1e;
       }
 
       body {
@@ -51,6 +54,16 @@
         font-size: 18px;
         font-weight: 500;
       }
+      .lang-toggle-btn {
+        background: #141414;
+        border: 1px solid var(--border-color);
+        color: var(--primary-blue);
+        padding: 6px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: bold;
+      }
 
       .nav-tabs {
         display: flex;
@@ -87,7 +100,7 @@
         border-radius: 20px;
         padding: 20px;
         max-width: 480px;
-        margin: 0 auto;
+        margin: 0 auto 20px auto;
       }
 
       h2.form-title {
@@ -105,17 +118,36 @@
         text-transform: uppercase;
       }
       .form-group {
-        margin-bottom: 20px;
+        margin-bottom: 22px;
+      }
+      .date-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
       }
       label {
         display: block;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
         color: var(--text-muted);
-        font-size: 15px;
+        font-size: 14px;
       }
 
+      .cycle-helper-badge {
+        background-color: rgba(0, 132, 255, 0.1);
+        border: 1px solid rgba(0, 132, 255, 0.3);
+        color: var(--primary-blue);
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        margin-bottom: 12px;
+        display: block;
+        font-weight: 500;
+      }
+
+      input[type="number"],
+      input[type="date"],
       input[type="text"],
-      input[type="number"] {
+      select {
         width: 100%;
         background-color: var(--input-bg);
         border: 1px solid var(--border-color);
@@ -126,58 +158,28 @@
         font-size: 16px;
       }
 
-      .toggle-container {
+      .chips-container {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background-color: var(--input-bg);
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 5px;
+      }
+      .chip {
+        background-color: var(--chip-unselected);
+        color: var(--text-main);
         border: 1px solid var(--border-color);
-        padding: 14px;
-        border-radius: 12px;
-      }
-
-      .switch {
-        position: relative;
-        display: inline-block;
-        width: 48px;
-        height: 26px;
-      }
-
-      .switch input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-      }
-
-      .slider {
-        position: absolute;
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
         cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #262626;
-        transition: 0.3s;
-        border-radius: 34px;
+        user-select: none;
       }
-
-      .slider:before {
-        position: absolute;
-        content: "";
-        height: 18px;
-        width: 18px;
-        left: 4px;
-        bottom: 4px;
-        background-color: white;
-        transition: 0.3s;
-        border-radius: 50%;
-      }
-
-      input:checked + .slider {
+      .chip.selected {
         background-color: var(--primary-blue);
-      }
-      input:checked + .slider:before {
-        transform: translateX(22px);
+        border-color: var(--primary-blue);
       }
 
       .submit-btn {
@@ -189,76 +191,595 @@
         border-radius: 10px;
         font-size: 16px;
         font-weight: bold;
-        margin-top: 20px;
+        margin-top: 10px;
         cursor: pointer;
+      }
+
+      .history-feed {
+        max-width: 480px;
+        margin: 0 auto;
+      }
+      .history-item {
+        background: #0f0f0f;
+        border: 1px solid var(--border-color);
+        padding: 14px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        line-height: 1.5;
+        position: relative;
+      }
+      .history-main-row {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+        margin-bottom: 6px;
+      }
+      .action-buttons-group {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .action-btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+      }
+      .edit-btn {
+        color: var(--accent-orange);
+        font-size: 15px;
+      }
+      .remove-btn {
+        color: var(--danger-red);
+        font-size: 20px;
+      }
+      .date-meta-info {
+        font-size: 12px;
+        color: var(--text-muted);
+        margin-top: 4px;
       }
     </style>
   </head>
   <body>
     <div class="top-navbar">
       <div class="user-info">
-        <span class="badge-driver">Driver</span>
+        <span class="badge-driver" id="lang-role">Driver</span>
         <span class="username">tsngen</span>
+      </div>
+      <div>
+        <button
+          class="lang-toggle-btn"
+          id="langToggleBtn"
+          onclick="toggleLanguage()"
+        >
+          廣東話
+        </button>
       </div>
     </div>
 
     <div class="nav-tabs" id="mainNavigationRow">
-      <button class="tab-btn" onclick="window.location.href = 'index.html'">
+      <button
+        class="tab-btn"
+        id="nav-log"
+        onclick="window.location.href = 'index.html'"
+      >
         Log Trip
       </button>
-      <button class="tab-btn" onclick="window.location.href = 'claim.html'">
-        Claims
+      <button
+        class="tab-btn"
+        id="nav-claims"
+        onclick="window.location.href = 'claim.html'"
+      >
+        Claims Statement
       </button>
-      <button class="tab-btn" onclick="window.location.href = 'expenses.html'">
-        Log Expense
+      <button
+        class="tab-btn"
+        id="nav-expenses"
+        onclick="window.location.href = 'expenses.html'"
+      >
+        Log Expenses
       </button>
-      <button class="tab-btn active" onclick="window.location.href = 'rental.html'">
+      <button
+        class="tab-btn active"
+        id="nav-rental"
+        onclick="window.location.href = 'rental.html'"
+      >
         Log Rental
       </button>
-      <button class="tab-btn" onclick="alert('Module opening soon')">
+      <button
+        class="tab-btn"
+        id="nav-profile"
+        onclick="alert('Module opening soon')"
+      >
         Profile
       </button>
     </div>
 
     <div class="form-card">
-      <h2 class="form-title">Log Rental</h2>
-      <div class="section-label">Rental Details</div>
-
-      <div class="form-group">
-        <label>Date</label>
-        <input type="text" placeholder="Select date" />
+      <h2 class="form-title" id="lang-form-title">Log Rental</h2>
+      <div class="section-label" id="lang-sec-details">
+        Rental Agreement Terms
       </div>
 
+      <!-- Car Model Reference Selection -->
       <div class="form-group">
-        <label>Amount (RM)</label>
-        <input type="number" placeholder="e.g. 500" />
+        <label id="lang-lbl-car">Car Model Allocation</label>
+        <div class="chips-container" id="rentalCarChipsContainer"></div>
       </div>
 
-      <div class="form-group">
-        <label>Rental Period</label>
-        <input type="text" placeholder="e.g. 1st - 15th of July" />
+      <!-- Smart calculated schedule preview badge -->
+      <div id="cycleCalculationPreview" class="cycle-helper-badge">
+        Calculating cycle parameters...
       </div>
 
-      <div class="form-group">
-        <label>Description / Notes</label>
-        <input type="text" placeholder="e.g. Weekly vehicle rental" />
-      </div>
-
-      <div class="form-group">
-        <div class="toggle-container">
-          <span
-            class="toggle-label"
-            style="color: var(--text-main); font-size: 16px"
-            >JG Claimable</span
-          >
-          <label class="switch">
-            <input type="checkbox" />
-            <span class="slider"></span>
-          </label>
+      <!-- Date Configuration Mapping -->
+      <div class="form-group date-grid">
+        <div>
+          <label id="lang-lbl-start-date">Cycle Start Date</label>
+          <input
+            type="date"
+            id="rentalCycleStartDate"
+            onchange="calculatePeriodRange()"
+          />
+        </div>
+        <div>
+          <label id="lang-lbl-payment-date">Actual Payment Date</label>
+          <input type="date" id="rentalPaymentDate" />
         </div>
       </div>
 
-      <button class="submit-btn">Save Rental</button>
+      <div class="form-group">
+        <label id="lang-lbl-rate-type">Rental Rate Structure</label>
+        <select id="rentalRateType" onchange="handleRateTypeChange()">
+          <option value="Daily">Daily Basis Rate</option>
+          <option value="Weekly" selected>Weekly Cycle Block</option>
+          <option value="Monthly">Monthly Cycle Block</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label id="lang-lbl-amount">Amount Documented (RM)</label>
+        <input
+          type="number"
+          id="rentalAmount"
+          placeholder="e.g. 350"
+          inputmode="numeric"
+        />
+      </div>
+
+      <div class="form-group">
+        <label id="lang-lbl-notes">Reference Notes</label>
+        <input
+          type="text"
+          id="rentalNotes"
+          placeholder="Payment receipt references, extensions..."
+        />
+      </div>
+
+      <button
+        class="submit-btn"
+        id="submitRentalBtn"
+        onclick="saveRentalLocal()"
+      >
+        Save Rental Log
+      </button>
     </div>
+
+    <div class="history-feed">
+      <div class="section-label" id="lang-sec-history">
+        Rental Payment Records
+      </div>
+      <div id="rentalHistoryFeed"></div>
+    </div>
+
+    <script>
+      let currentLang = localStorage.getItem("preferredLanguage") || "en";
+
+      let carModels = [];
+      let selectedCarIndex = 0;
+      let editingRentalId = null;
+
+      const translations = {
+        en: {
+          role: "DRIVER",
+          navLog: "Log Trip",
+          navClaims: "Claims Statement",
+          navExpenses: "Log Expenses",
+          navRental: "Log Rental",
+          navProfile: "Profile",
+          formTitle: "Log Rental",
+          secDetails: "Rental Structure Details",
+          lblCar: "Car Model Allocation",
+          lblStartDate: "Cycle Start Date",
+          lblPaymentDate: "Actual Payment Date",
+          lblRateType: "Rental Rate Structure",
+          lblAmount: "Amount Documented (RM)",
+          lblNotes: "Reference Notes",
+          btnSave: "Save Rental Log",
+          btnUpdate: "Update Rental Record",
+          secHistory: "Rental Payment Records",
+          amtPlaceholder: "e.g. 350",
+          notesPlaceholder: "Payment receipt references, extensions...",
+          alertMissing:
+            "Please fill in the documented amount and verify car selection!",
+          alertSaved: "Rental entry recorded successfully!",
+          noRecords: "No rental payments documented yet.",
+          optDaily: "Daily Basis Rate",
+          optWeekly: "Weekly Cycle Block",
+          optMonthly: "Monthly Cycle Block",
+          prefixCycleText: "Scheduled Coverage: ",
+        },
+        zh: {
+          role: "司機",
+          navLog: "記錄行程",
+          navClaims: "報銷明細",
+          navExpenses: "記錄開支",
+          navRental: "記錄租金",
+          navProfile: "個人資料",
+          formTitle: "記錄租金繳付",
+          secDetails: "租賃結構與條款",
+          lblCar: "分配使用車型",
+          lblStartDate: "租期起算日 (Cycle Start)",
+          lblPaymentDate: "實際付款日期",
+          lblRateType: "計費週率結構",
+          lblAmount: "已付租金金額 (RM)",
+          lblNotes: "參考備註",
+          btnSave: "儲存租金記錄",
+          btnUpdate: "更新租金記錄",
+          secHistory: "已登記租金流水賬",
+          amtPlaceholder: "例如: 350",
+          notesPlaceholder: "收據憑證單號、續約期備註...",
+          alertMissing: "請填寫租金總額並確認分配車型！",
+          alertSaved: "租金繳付賬目已成功存檔！",
+          noRecords: "尚無已登記的租金記錄。",
+          optDaily: "按日計費率",
+          optWeekly: "按週結構計費",
+          optMonthly: "按月結構計費",
+          prefixCycleText: "預計覆蓋租期周期: ",
+        },
+      };
+
+      const todayString = new Date().toISOString().split("T")[0];
+      document.getElementById("rentalPaymentDate").value = todayString;
+
+      function loadCarsFromTripLogs() {
+        const savedTrips = JSON.parse(localStorage.getItem("savedTrips")) || [];
+        const uniqueCarsMap = new Map();
+
+        savedTrips.forEach((trip) => {
+          const model = trip.carModel || trip.car || "";
+          const plate = trip.plateNumber || trip.plate || "";
+          if (model.trim() !== "") {
+            const uniqueKey = `${model.trim()}_${plate.trim()}`;
+            if (!uniqueCarsMap.has(uniqueKey)) {
+              uniqueCarsMap.set(uniqueKey, {
+                model: model.trim(),
+                plate: plate.trim().toUpperCase(),
+              });
+            }
+          }
+        });
+
+        carModels = Array.from(uniqueCarsMap.values());
+        if (carModels.length === 0) {
+          carModels = [
+            { model: "Bezza", plate: "VKE7927" },
+            { model: "Dua lila", plate: "FKE3452" },
+          ];
+        }
+      }
+
+      function toggleLanguage() {
+        currentLang = currentLang === "en" ? "zh" : "en";
+        localStorage.setItem("preferredLanguage", currentLang);
+        updateToggleBtnText();
+        applyTranslations();
+      }
+
+      function updateToggleBtnText() {
+        const btn = document.getElementById("langToggleBtn");
+        if (btn) btn.innerText = currentLang === "en" ? "廣東話" : "English";
+      }
+
+      function applyTranslations() {
+        const t = translations[currentLang];
+
+        document.getElementById("lang-role").innerText = t.role;
+        document.getElementById("nav-log").innerText = t.navLog;
+        document.getElementById("nav-claims").innerText = t.navClaims;
+        document.getElementById("nav-expenses").innerText = t.navExpenses;
+        document.getElementById("nav-rental").innerText = t.navRental;
+        document.getElementById("nav-profile").innerText = t.navProfile;
+
+        document.getElementById("lang-form-title").innerText = t.formTitle;
+        document.getElementById("lang-sec-details").innerText = t.secDetails;
+        document.getElementById("lang-lbl-car").innerText = t.lblCar;
+        document.getElementById("lang-lbl-start-date").innerText =
+          t.lblStartDate;
+        document.getElementById("lang-lbl-payment-date").innerText =
+          t.lblPaymentDate;
+        document.getElementById("lang-lbl-rate-type").innerText = t.lblRateType;
+        document.getElementById("lang-lbl-amount").innerText = t.lblAmount;
+        document.getElementById("lang-lbl-notes").innerText = t.lblNotes;
+
+        document.getElementById("submitRentalBtn").innerText = editingRentalId
+          ? t.btnUpdate
+          : t.btnSave;
+        document.getElementById("lang-sec-history").innerText = t.secHistory;
+
+        document.getElementById("rentalAmount").placeholder = t.amtPlaceholder;
+        document.getElementById("rentalNotes").placeholder = t.notesPlaceholder;
+
+        const selectRate = document.getElementById("rentalRateType");
+        const currentSelVal = selectRate.value;
+        selectRate.innerHTML = `
+          <option value="Daily">${t.optDaily}</option>
+          <option value="Weekly">${t.optWeekly}</option>
+          <option value="Monthly">${t.optMonthly}</option>
+        `;
+        selectRate.value = currentSelVal;
+
+        renderCarChips();
+        calculatePeriodRange();
+        renderRentalFeed();
+      }
+
+      function renderCarChips() {
+        const container = document.getElementById("rentalCarChipsContainer");
+        container.innerHTML = "";
+        carModels.forEach((carObj, index) => {
+          const isSelected = index === selectedCarIndex ? "selected" : "";
+          const displayStr = carObj.plate
+            ? `${carObj.model} (${carObj.plate})`
+            : carObj.model;
+          container.innerHTML += `
+            <div class="chip ${isSelected}" onclick="selectCar(${index})">${displayStr}</div>
+          `;
+        });
+      }
+
+      function selectCar(index) {
+        selectedCarIndex = index;
+        renderCarChips();
+        setSmartDefaultStartDate();
+      }
+
+      // Automatically find out the next logical timeline start block based on historic data
+      function setSmartDefaultStartDate() {
+        if (editingRentalId) return; // Prevent overwriting during modification
+
+        const activeCar = carModels[selectedCarIndex];
+        const savedRentals =
+          JSON.parse(localStorage.getItem("savedRentals")) || [];
+
+        // Find most recent item logged for this individual asset configuration
+        const filtered = savedRentals.filter(
+          (r) =>
+            r.rawCarModel === activeCar.model &&
+            r.rawCarPlate === activeCar.plate,
+        );
+
+        if (filtered.length > 0) {
+          const lastRecord = filtered[0];
+          if (lastRecord.calculatedEndDate) {
+            // Day right after last block execution closed out
+            let lastEnd = new Date(lastRecord.calculatedEndDate);
+            lastEnd.setDate(lastEnd.getDate() + 1);
+            document.getElementById("rentalCycleStartDate").value = lastEnd
+              .toISOString()
+              .split("T")[0];
+            calculatePeriodRange();
+            return;
+          }
+        }
+        document.getElementById("rentalCycleStartDate").value = todayString;
+        calculatePeriodRange();
+      }
+
+      function handleRateTypeChange() {
+        const rateType = document.getElementById("rentalRateType").value;
+        const amtField = document.getElementById("rentalAmount");
+        if (rateType === "Daily") amtField.placeholder = "e.g. 50";
+        else if (rateType === "Weekly") amtField.placeholder = "e.g. 350";
+        else amtField.placeholder = "e.g. 1400";
+
+        calculatePeriodRange();
+      }
+
+      // Processes "From Day X to Day Y" math transparently to avoid calculation chaos
+      function calculatePeriodRange() {
+        const startDateVal = document.getElementById(
+          "rentalCycleStartDate",
+        ).value;
+        const rateType = document.getElementById("rentalRateType").value;
+        const previewElement = document.getElementById(
+          "cycleCalculationPreview",
+        );
+        const t = translations[currentLang];
+
+        if (!startDateVal) {
+          previewElement.innerText = "Please pick a Cycle Start Date";
+          return;
+        }
+
+        let start = new Date(startDateVal);
+        let end = new Date(startDateVal);
+
+        if (rateType === "Daily") {
+          // 1 day cycle block coverage
+        } else if (rateType === "Weekly") {
+          end.setDate(start.getDate() + 6);
+        } else if (rateType === "Monthly") {
+          end.setMonth(start.getMonth() + 1);
+          end.setDate(end.getDate() - 1);
+        }
+
+        const formatOptions = {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        };
+        const startStr = start.toLocaleDateString("en-GB", formatOptions);
+        const endStr = end.toLocaleDateString("en-GB", formatOptions);
+
+        previewElement.innerHTML = `⏳ <strong>${t.prefixCycleText}</strong> ${startStr} ➡️ ${endStr}`;
+        previewElement.dataset.computedEnd = end.toISOString().split("T")[0];
+      }
+
+      function startEditRental(id) {
+        let savedRentals =
+          JSON.parse(localStorage.getItem("savedRentals")) || [];
+        const match = savedRentals.find((r) => r.id === id);
+        if (!match) return;
+
+        editingRentalId = id;
+        document.getElementById("rentalCycleStartDate").value =
+          match.cycleStartDate;
+        document.getElementById("rentalPaymentDate").value = match.paymentDate;
+        document.getElementById("rentalRateType").value =
+          match.rateType || "Weekly";
+        document.getElementById("rentalAmount").value = match.amount;
+        document.getElementById("rentalNotes").value = match.rawNotes || "";
+
+        const carMatchIndex = carModels.findIndex(
+          (c) => c.model === match.rawCarModel && c.plate === match.rawCarPlate,
+        );
+        if (carMatchIndex !== -1) selectedCarIndex = carMatchIndex;
+
+        document.getElementById("submitRentalBtn").innerText =
+          translations[currentLang].btnUpdate;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        renderCarChips();
+        calculatePeriodRange();
+      }
+
+      function saveRentalLocal() {
+        const amt = document.getElementById("rentalAmount").value;
+        const notes = document.getElementById("rentalNotes").value;
+        const cycleStartDate = document.getElementById(
+          "rentalCycleStartDate",
+        ).value;
+        const paymentDate = document.getElementById("rentalPaymentDate").value;
+        const rateType = document.getElementById("rentalRateType").value;
+        const computedEnd = document.getElementById("cycleCalculationPreview")
+          .dataset.computedEnd;
+        const t = translations[currentLang];
+
+        const activeCar = carModels[selectedCarIndex];
+        if (!amt || !activeCar) {
+          alert(t.alertMissing);
+          return;
+        }
+
+        let savedRentals =
+          JSON.parse(localStorage.getItem("savedRentals")) || [];
+
+        const rentalRecord = {
+          id: editingRentalId ? editingRentalId : Date.now(),
+          cycleStartDate: cycleStartDate,
+          calculatedEndDate: computedEnd,
+          paymentDate: paymentDate,
+          rateType: rateType,
+          amount: parseFloat(amt).toFixed(2),
+          rawCarModel: activeCar.model,
+          rawCarPlate: activeCar.plate,
+          rawNotes: notes,
+        };
+
+        if (editingRentalId) {
+          savedRentals = savedRentals.map((item) =>
+            item.id === editingRentalId ? rentalRecord : item,
+          );
+          editingRentalId = null;
+        } else {
+          savedRentals.unshift(rentalRecord);
+        }
+
+        localStorage.setItem("savedRentals", JSON.stringify(savedRentals));
+
+        // Reset inputs clean
+        document.getElementById("rentalAmount").value = "";
+        document.getElementById("rentalNotes").value = "";
+        document.getElementById("submitRentalBtn").innerText = t.btnSave;
+
+        alert(t.alertSaved);
+        setSmartDefaultStartDate();
+        renderRentalFeed();
+      }
+
+      function removeRentalItem(id) {
+        let savedRentals =
+          JSON.parse(localStorage.getItem("savedRentals")) || [];
+        savedRentals = savedRentals.filter((r) => r.id !== id);
+        localStorage.setItem("savedRentals", JSON.stringify(savedRentals));
+        setSmartDefaultStartDate();
+        renderRentalFeed();
+      }
+
+      function renderRentalFeed() {
+        const feedContainer = document.getElementById("rentalHistoryFeed");
+        const savedRentals =
+          JSON.parse(localStorage.getItem("savedRentals")) || [];
+        const t = translations[currentLang];
+
+        feedContainer.innerHTML = "";
+
+        if (savedRentals.length === 0) {
+          feedContainer.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">${t.noRecords}</div>`;
+          return;
+        }
+
+        savedRentals.forEach((item) => {
+          const displayCar = item.rawCarPlate
+            ? `${item.rawCarModel} (${item.rawCarPlate})`
+            : item.rawCarModel;
+          const labelPaid = currentLang === "en" ? "Paid Date" : "實付日期";
+
+          // Format dates for display
+          const opt = { year: "numeric", month: "2-digit", day: "2-digit" };
+          const ds = new Date(item.cycleStartDate).toLocaleDateString(
+            "en-GB",
+            opt,
+          );
+          const de = item.calculatedEndDate
+            ? new Date(item.calculatedEndDate).toLocaleDateString("en-GB", opt)
+            : "...";
+
+          feedContainer.innerHTML += `
+            <div class="history-item">
+              <div class="action-buttons-group">
+                <button class="action-btn edit-btn" onclick="startEditRental(${item.id})">✏️</button>
+                <button class="action-btn remove-btn" onclick="removeRentalItem(${item.id})">&times;</button>
+              </div>
+              <div class="history-content">
+                <div class="history-main-row">
+                  <span>RM ${item.amount}</span>
+                  <span style="color:var(--accent-orange); font-size:12px;">${item.rateType}</span>
+                </div>
+                <div style="color:var(--text-main); font-size:13px; font-weight:500; margin-bottom: 2px;">
+                  ${displayCar}
+                </div>
+                <div style="font-size: 12px; color: var(--primary-blue); font-weight: 500;">
+                  📅 ${ds} ➡️ ${de}
+                </div>
+                <div class="date-meta-info">
+                  <strong>${labelPaid}:</strong> ${item.paymentDate}
+                </div>
+                ${item.rawNotes ? `<div style="color:#737373; font-size:12px; margin-top:4px; font-style:italic;">"${item.rawNotes}"</div>` : ""}
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      loadCarsFromTripLogs();
+      updateToggleBtnText();
+      applyTranslations();
+      setSmartDefaultStartDate();
+    </script>
   </body>
 </html>
