@@ -7,13 +7,16 @@
     <style>
       :root {
         --bg-color: #000000;
-        --card-bg: #0a0a0a;
+        --card-bg: #0d0d0d;
         --input-bg: #141414;
         --border-color: #262626;
         --text-main: #ffffff;
         --text-muted: #a3a3a3;
         --primary-blue: #0084ff;
         --accent-orange: #f59e0b;
+        --danger-red: #ef4444;
+        --success-green: #22c55e;
+        --chip-unselected: #1c1c1e;
       }
 
       body {
@@ -51,6 +54,16 @@
         font-size: 18px;
         font-weight: 500;
       }
+      .lang-toggle-btn {
+        background: #141414;
+        border: 1px solid var(--border-color);
+        color: var(--primary-blue);
+        padding: 6px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: bold;
+      }
 
       .nav-tabs {
         display: flex;
@@ -87,7 +100,7 @@
         border-radius: 20px;
         padding: 20px;
         max-width: 480px;
-        margin: 0 auto;
+        margin: 0 auto 20px auto;
       }
 
       h2.form-title {
@@ -105,18 +118,76 @@
         text-transform: uppercase;
       }
       .form-group {
-        margin-bottom: 20px;
+        margin-bottom: 22px;
       }
       label {
         display: block;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
         color: var(--text-muted);
         font-size: 15px;
       }
 
-      input[type="text"],
+      .amount-upload-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .amount-upload-row input {
+        flex: 1;
+      }
+      .upload-btn-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+      }
+      .receipt-icon-btn {
+        background-color: var(--input-bg);
+        border: 1px dashed var(--primary-blue);
+        color: var(--primary-blue);
+        padding: 14px 18px;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .receipt-icon-btn.has-file {
+        border-color: var(--success-green);
+        color: var(--success-green);
+        background-color: rgba(34, 197, 94, 0.05);
+      }
+      .receipt-icon-btn input[type="file"] {
+        position: absolute;
+        font-size: 100px;
+        opacity: 0;
+        right: 0;
+        top: 0;
+        cursor: pointer;
+      }
+
+      .file-preview-pill {
+        background-color: #141414;
+        border: 1px solid var(--border-color);
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        margin-top: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-muted);
+      }
+      .file-preview-pill .clear-file-btn {
+        color: var(--danger-red);
+        cursor: pointer;
+        font-weight: bold;
+      }
+
       input[type="number"],
-      select {
+      input[type="date"],
+      input[type="text"] {
         width: 100%;
         background-color: var(--input-bg);
         border: 1px solid var(--border-color);
@@ -125,6 +196,50 @@
         border-radius: 10px;
         box-sizing: border-box;
         font-size: 16px;
+      }
+
+      .chips-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 5px;
+      }
+      .chip {
+        background-color: var(--chip-unselected);
+        color: var(--text-main);
+        border: 1px solid var(--border-color);
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-size: 14px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        user-select: none;
+        transition: background 0.2s;
+      }
+      .chip.selected {
+        background-color: var(--primary-blue);
+        border-color: var(--primary-blue);
+      }
+      .chip .close-x {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 16px;
+        font-weight: bold;
+        padding: 0 2px;
+      }
+      .chip .close-x:hover {
+        color: var(--danger-red);
+      }
+      .add-chip-btn {
+        background: transparent;
+        color: var(--primary-blue);
+        border: 1px dashed var(--primary-blue);
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-size: 14px;
+        cursor: pointer;
+        font-weight: 500;
       }
 
       .toggle-container {
@@ -143,13 +258,11 @@
         width: 48px;
         height: 26px;
       }
-
       .switch input {
         opacity: 0;
         width: 0;
         height: 0;
       }
-
       .slider {
         position: absolute;
         cursor: pointer;
@@ -161,7 +274,6 @@
         transition: 0.3s;
         border-radius: 34px;
       }
-
       .slider:before {
         position: absolute;
         content: "";
@@ -173,7 +285,6 @@
         transition: 0.3s;
         border-radius: 50%;
       }
-
       input:checked + .slider {
         background-color: var(--primary-blue);
       }
@@ -190,82 +301,653 @@
         border-radius: 10px;
         font-size: 16px;
         font-weight: bold;
-        margin-top: 20px;
+        margin-top: 10px;
         cursor: pointer;
+      }
+
+      .history-feed {
+        max-width: 480px;
+        margin: 0 auto;
+      }
+      .history-item {
+        background: #0f0f0f;
+        border: 1px solid var(--border-color);
+        padding: 14px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        line-height: 1.5;
+        position: relative;
+      }
+      .history-main-row {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+        margin-bottom: 4px;
+        padding-right: 60px;
+      }
+      .action-buttons-group {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .action-btn {
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        padding: 0;
+        line-height: 1;
+      }
+      .edit-btn {
+        color: var(--accent-orange);
+      }
+      .remove-btn {
+        color: var(--danger-red);
+        font-size: 20px;
       }
     </style>
   </head>
   <body>
     <div class="top-navbar">
       <div class="user-info">
-        <span class="badge-driver">Driver</span>
+        <span class="badge-driver" id="lang-role">Driver</span>
         <span class="username">tsngen</span>
+      </div>
+      <div class="nav-right-group">
+        <button
+          class="lang-toggle-btn"
+          id="langToggleBtn"
+          onclick="toggleLanguage()"
+        >
+          廣東話
+        </button>
       </div>
     </div>
 
     <div class="nav-tabs" id="mainNavigationRow">
-      <button class="tab-btn" onclick="window.location.href = 'index.html'">
+      <button
+        class="tab-btn"
+        id="nav-log"
+        onclick="window.location.href = 'index.html'"
+      >
         Log Trip
       </button>
-      <button class="tab-btn" onclick="window.location.href = 'claim.html'">
-        Claims
+      <button
+        class="tab-btn"
+        id="nav-claims"
+        onclick="window.location.href = 'claim.html'"
+      >
+        Claims Statement
       </button>
-      <button class="tab-btn active" onclick="window.location.href = 'expenses.html'">
-        Log Expense
+      <button
+        class="tab-btn active"
+        id="nav-expenses"
+        onclick="window.location.href = 'expenses.html'"
+      >
+        Log Expenses
       </button>
-      <button class="tab-btn" onclick="window.location.href = 'rental.html'">
+      <button
+        class="tab-btn"
+        id="nav-rental"
+        onclick="window.location.href = 'rental.html'"
+      >
         Log Rental
       </button>
-      <button class="tab-btn" onclick="alert('Module opening soon')">
+      <button
+        class="tab-btn"
+        id="nav-profile"
+        onclick="alert('Module opening soon')"
+      >
         Profile
       </button>
     </div>
 
     <div class="form-card">
-      <h2 class="form-title">Log Expense</h2>
-      <div class="section-label">Expense Details</div>
+      <h2 class="form-title" id="lang-form-title">Log Expense</h2>
+      <div class="section-label" id="lang-sec-details">Expense Details</div>
 
       <div class="form-group">
-        <label>Date</label>
-        <input type="text" placeholder="Select date" />
+        <label id="lang-lbl-date">Date</label>
+        <input type="date" id="expenseDate" />
       </div>
 
       <div class="form-group">
-        <label>Amount (RM)</label>
-        <input type="number" placeholder="e.g. 50" />
+        <label id="lang-lbl-car">Car Model</label>
+        <div class="chips-container" id="carChipsContainer"></div>
       </div>
 
       <div class="form-group">
-        <label>Category</label>
-        <select>
-          <option>Fuel</option>
-          <option>Toll</option>
-          <option>Maintenance</option>
-          <option>Parking</option>
-          <option>Other</option>
-        </select>
+        <label id="lang-lbl-type">Expense Type / Job Description</label>
+        <div class="chips-container" id="typeChipsContainer"></div>
       </div>
 
       <div class="form-group">
-        <label>Description</label>
-        <input type="text" placeholder="e.g. Weekly car wash" />
+        <label id="lang-lbl-amount">Amount (RM) & Proof Receipt</label>
+        <div class="amount-upload-row">
+          <input
+            type="number"
+            id="expenseAmount"
+            placeholder="e.g. 50"
+            inputmode="numeric"
+          />
+
+          <div class="upload-btn-wrapper">
+            <button class="receipt-icon-btn" id="receiptUiBtn">
+              📎
+              <input
+                type="file"
+                id="receiptFileInput"
+                accept="image/*,application/pdf"
+                onchange="handleFileSelected(this)"
+              />
+            </button>
+          </div>
+        </div>
+        <div id="filePreviewContainer"></div>
+      </div>
+
+      <div class="form-group">
+        <label id="lang-lbl-notes">Additional Notes</label>
+        <input
+          type="text"
+          id="expenseNotes"
+          placeholder="Optional job details..."
+        />
       </div>
 
       <div class="form-group">
         <div class="toggle-container">
           <span
             class="toggle-label"
+            id="lang-lbl-claimable"
             style="color: var(--text-main); font-size: 16px"
             >JG Claimable</span
           >
           <label class="switch">
-            <input type="checkbox" />
+            <input type="checkbox" id="jgClaimableToggle" />
             <span class="slider"></span>
           </label>
         </div>
       </div>
 
-      <button class="submit-btn">Save Expense</button>
+      <button
+        class="submit-btn"
+        id="submitExpenseBtn"
+        onclick="saveExpenseLocal()"
+      >
+        Save Expense
+      </button>
     </div>
+
+    <div class="history-feed">
+      <div class="section-label" id="lang-sec-history">Expense History</div>
+      <div id="expenseHistoryFeed"></div>
+    </div>
+
+    <script>
+      let currentLang = localStorage.getItem("preferredLanguage") || "en";
+
+      let carModels = [];
+      let expenseTypes = [
+        "Fuel",
+        "Toll",
+        "Car Wash",
+        "Repair",
+        "Diesel Euro 5",
+        "Owner Reimbursement", // Added Car Owner Reimbursement context category
+      ];
+
+      let selectedCarIndex = 0;
+      let selectedType = "Fuel";
+      let base64ReceiptData = "";
+      let receiptFileName = "";
+      let editingExpenseId = null;
+
+      const translations = {
+        en: {
+          role: "DRIVER",
+          navLog: "Log Trip",
+          navClaims: "Claims Statement",
+          navExpenses: "Log Expenses",
+          navRental: "Log Rental",
+          navProfile: "Profile",
+          formTitle: "Log Expense",
+          secDetails: "Expense Details",
+          lblDate: "Date",
+          lblCar: "Car Model (From Trip Logs)",
+          lblType: "Expense Type / Job Description",
+          lblAmount: "Amount (RM) & Proof Receipt",
+          lblNotes: "Additional Notes",
+          lblClaimable: "JG Claimable",
+          btnSave: "Save Expense",
+          btnUpdate: "Update Expense Entry",
+          secHistory: "Expense Ledger History",
+          amtPlaceholder: "e.g. 50",
+          notesPlaceholder: "Optional job details...",
+          alertMissing: "Please enter the amount and select the tags!",
+          alertSaved: "Expense recorded successfully!",
+          noRecords: "No expenses recorded yet.",
+          claimBadge: "JG Claimable",
+          nonClaimBadge: "Personal Cost",
+          reimburseBadge: "Owner Reimburse",
+          addCarPrompt: "Enter new Car Model:",
+          addPlatePrompt: "Enter Plate Number:",
+          addTypePrompt: "Enter new Type:",
+        },
+        zh: {
+          role: "司機",
+          navLog: "記錄行程",
+          navClaims: "報銷明細",
+          navExpenses: "記錄開支",
+          navRental: "記錄租金",
+          navProfile: "個人資料",
+          formTitle: "記錄費用支出",
+          secDetails: "開支詳情",
+          lblDate: "日期",
+          lblCar: "車型款式",
+          lblType: "費用類型 / 工作描述",
+          lblAmount: "金額 (RM) 及 單據附件",
+          lblNotes: "額外備註",
+          lblClaimable: "向 JG 報銷",
+          btnSave: "儲存開支",
+          btnUpdate: "更新費用記錄",
+          secHistory: "開支歷史總賬",
+          amtPlaceholder: "例如: 50",
+          notesPlaceholder: "可選填工作細節...",
+          alertMissing: "請輸入開支金額並選擇標籤！",
+          alertSaved: "費用支出記錄已成功處理！",
+          noRecords: "尚無開支記錄。",
+          claimBadge: "可向 JG 報銷",
+          nonClaimBadge: "自付開支",
+          reimburseBadge: "車主墊付返還",
+          addCarPrompt: "輸入新車型款式:",
+          addPlatePrompt: "輸入車牌號碼:",
+          addTypePrompt: "輸入新費用種類:",
+        },
+      };
+
+      document.getElementById("expenseDate").value = new Date()
+        .toISOString()
+        .split("T")[0];
+
+      function loadCarsFromTripLogs() {
+        const savedTrips = JSON.parse(localStorage.getItem("savedTrips")) || [];
+        const uniqueCarsMap = new Map();
+
+        savedTrips.forEach((trip) => {
+          const model = trip.carModel || trip.car || "";
+          const plate = trip.plateNumber || trip.plate || "";
+          if (model.trim() !== "") {
+            const uniqueKey = `${model.trim()}_${plate.trim()}`;
+            if (!uniqueCarsMap.has(uniqueKey)) {
+              uniqueCarsMap.set(uniqueKey, {
+                model: model.trim(),
+                plate: plate.trim().toUpperCase(),
+              });
+            }
+          }
+        });
+
+        carModels = Array.from(uniqueCarsMap.values());
+        if (carModels.length === 0) {
+          carModels = [
+            { model: "Bezza", plate: "VKE7927" },
+            { model: "Dua lila", plate: "FKE3452" },
+          ];
+        }
+      }
+
+      function handleFileSelected(input) {
+        const file = input.files[0];
+        if (!file) return;
+
+        receiptFileName = file.name;
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          base64ReceiptData = e.target.result;
+          document.getElementById("receiptUiBtn").classList.add("has-file");
+
+          let previewContainer = document.getElementById(
+            "filePreviewContainer",
+          );
+          previewContainer.innerHTML = `
+            <div class="file-preview-pill">
+              📎 ${file.name.length > 25 ? file.name.substring(0, 22) + "..." : file.name} 
+              <span class="clear-file-btn" onclick="clearAttachedFile()">&times;</span>
+            </div>
+          `;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function clearAttachedFile() {
+        base64ReceiptData = "";
+        receiptFileName = "";
+        document.getElementById("receiptFileInput").value = "";
+        document.getElementById("receiptUiBtn").classList.remove("has-file");
+        document.getElementById("filePreviewContainer").innerHTML = "";
+      }
+
+      function toggleLanguage() {
+        currentLang = currentLang === "en" ? "zh" : "en";
+        localStorage.setItem("preferredLanguage", currentLang);
+        updateToggleBtnText();
+        applyTranslations();
+      }
+
+      function updateToggleBtnText() {
+        const btn = document.getElementById("langToggleBtn");
+        if (btn) btn.innerText = currentLang === "en" ? "廣東話" : "English";
+      }
+
+      function applyTranslations() {
+        const t = translations[currentLang];
+
+        document.getElementById("lang-role").innerText = t.role;
+        document.getElementById("nav-log").innerText = t.navLog;
+        document.getElementById("nav-claims").innerText = t.navClaims;
+        document.getElementById("nav-expenses").innerText = t.navExpenses;
+        document.getElementById("nav-rental").innerText = t.navRental;
+        document.getElementById("nav-profile").innerText = t.navProfile;
+
+        document.getElementById("lang-form-title").innerText = t.formTitle;
+        document.getElementById("lang-sec-details").innerText = t.secDetails;
+        document.getElementById("lang-lbl-date").innerText = t.lblDate;
+        document.getElementById("lang-lbl-car").innerText = t.lblCar;
+        document.getElementById("lang-lbl-type").innerText = t.lblType;
+        document.getElementById("lang-lbl-amount").innerText = t.lblAmount;
+        document.getElementById("lang-lbl-notes").innerText = t.lblNotes;
+        document.getElementById("lang-lbl-claimable").innerText =
+          t.lblClaimable;
+
+        document.getElementById("submitExpenseBtn").innerText = editingExpenseId
+          ? t.btnUpdate
+          : t.btnSave;
+        document.getElementById("lang-sec-history").innerText = t.secHistory;
+
+        document.getElementById("expenseAmount").placeholder = t.amtPlaceholder;
+        document.getElementById("expenseNotes").placeholder =
+          t.notesPlaceholder;
+
+        renderChips();
+        renderExpenseFeed();
+      }
+
+      function renderChips() {
+        const carContainer = document.getElementById("carChipsContainer");
+        carContainer.innerHTML = "";
+        carModels.forEach((carObj, index) => {
+          const isSelected = index === selectedCarIndex ? "selected" : "";
+          const displayString = carObj.plate
+            ? `${carObj.model} (${carObj.plate})`
+            : carObj.model;
+          carContainer.innerHTML += `
+            <div class="chip ${isSelected}" onclick="selectCar(${index})">
+              ${displayString} <span class="close-x" onclick="removeCarItem(event, ${index})">&times;</span>
+            </div>
+          `;
+        });
+        carContainer.innerHTML += `<button class="add-chip-btn" onclick="addNewCar()">+ Add Car</button>`;
+
+        const typeContainer = document.getElementById("typeChipsContainer");
+        typeContainer.innerHTML = "";
+        expenseTypes.forEach((type) => {
+          const isSelected = type === selectedType ? "selected" : "";
+          // Localized readable conversion string adjustments for system readability
+          let displayType = type;
+          if (type === "Owner Reimbursement") {
+            displayType =
+              currentLang === "en"
+                ? "Owner Reimbursement (Fine/etc.)"
+                : "車主墊付返還 (罰單/等)";
+          }
+
+          typeContainer.innerHTML += `
+            <div class="chip ${isSelected}" onclick="selectType('${type}')">
+              ${displayType} <span class="close-x" onclick="removeTypeItem(event, '${type}')">&times;</span>
+            </div>
+          `;
+        });
+        typeContainer.innerHTML += `<button class="add-chip-btn" onclick="addNewType()">+ Add Job Type</button>`;
+      }
+
+      function selectCar(index) {
+        selectedCarIndex = index;
+        renderChips();
+      }
+
+      function selectType(type) {
+        selectedType = type;
+        renderChips();
+
+        // Smart automatic feature logic: If Owner Reimbursement is selected, turn OFF JG Claimable automatically
+        if (type === "Owner Reimbursement") {
+          document.getElementById("jgClaimableToggle").checked = false;
+        }
+      }
+
+      function addNewCar() {
+        const modelName = prompt(translations[currentLang].addCarPrompt);
+        if (modelName && modelName.trim() !== "") {
+          const plateNumber = prompt(translations[currentLang].addPlatePrompt);
+          if (plateNumber && plateNumber.trim() !== "") {
+            carModels.push({
+              model: modelName.trim(),
+              plate: plateNumber.trim().toUpperCase(),
+            });
+            selectedCarIndex = carModels.length - 1;
+            renderChips();
+          }
+        }
+      }
+
+      function addNewType() {
+        const name = prompt(translations[currentLang].addTypePrompt);
+        if (name && name.trim() !== "") {
+          expenseTypes.push(name.trim());
+          selectedType = name.trim();
+          renderChips();
+        }
+      }
+
+      function removeCarItem(event, index) {
+        event.stopPropagation();
+        if (carModels.length <= 1) return;
+        carModels.splice(index, 1);
+        if (selectedCarIndex >= carModels.length) selectedCarIndex = 0;
+        renderChips();
+      }
+
+      function removeTypeItem(event, type) {
+        event.stopPropagation();
+        if (expenseTypes.length <= 1) return;
+        expenseTypes = expenseTypes.filter((item) => item !== type);
+        if (selectedType === type) selectedType = expenseTypes[0];
+        renderChips();
+      }
+
+      function startEditExpense(id) {
+        let existingExpenses =
+          JSON.parse(localStorage.getItem("savedExpenses")) || [];
+        const target = existingExpenses.find((item) => item.id === id);
+        if (!target) return;
+
+        editingExpenseId = id;
+        document.getElementById("expenseDate").value = target.date;
+        document.getElementById("expenseAmount").value = target.amount;
+        document.getElementById("expenseNotes").value = target.rawNotes || "";
+        document.getElementById("jgClaimableToggle").checked =
+          target.jgClaimable;
+
+        const carMatchIndex = carModels.findIndex(
+          (c) =>
+            c.model === target.rawCarModel && c.plate === target.rawCarPlate,
+        );
+        if (carMatchIndex !== -1) {
+          selectedCarIndex = carMatchIndex;
+        } else if (target.rawCarModel) {
+          carModels.push({
+            model: target.rawCarModel,
+            plate: target.rawCarPlate || "",
+          });
+          selectedCarIndex = carModels.length - 1;
+        }
+
+        if (expenseTypes.includes(target.rawExpenseType)) {
+          selectedType = target.rawExpenseType;
+        } else if (target.rawExpenseType) {
+          expenseTypes.push(target.rawExpenseType);
+          selectedType = target.rawExpenseType;
+        }
+
+        if (target.receiptFile) {
+          base64ReceiptData = target.receiptFile;
+          receiptFileName = target.receiptName || "Attachment";
+          document.getElementById("receiptUiBtn").classList.add("has-file");
+          document.getElementById("filePreviewContainer").innerHTML = `
+            <div class="file-preview-pill">
+              📎 ${receiptFileName} <span class="clear-file-btn" onclick="clearAttachedFile()">&times;</span>
+            </div>
+          `;
+        } else {
+          clearAttachedFile();
+        }
+
+        document.getElementById("submitExpenseBtn").innerText =
+          translations[currentLang].btnUpdate;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        renderChips();
+      }
+
+      function saveExpenseLocal() {
+        const amt = document.getElementById("expenseAmount").value;
+        const notes = document.getElementById("expenseNotes").value;
+        const t = translations[currentLang];
+
+        const activeCarObj = carModels[selectedCarIndex];
+        if (!amt || !activeCarObj || !selectedType) {
+          alert(t.alertMissing);
+          return;
+        }
+
+        const displayCar = activeCarObj.plate
+          ? `${activeCarObj.model} - ${activeCarObj.plate}`
+          : activeCarObj.model;
+        const fullDescription = `[${displayCar}] ${selectedType} ${notes ? " (" + notes + ")" : ""}`;
+
+        let existingExpenses =
+          JSON.parse(localStorage.getItem("savedExpenses")) || [];
+
+        const expenseData = {
+          id: editingExpenseId ? editingExpenseId : Date.now(),
+          date: document.getElementById("expenseDate").value,
+          amount: parseFloat(amt).toFixed(2),
+          description: fullDescription,
+          jgClaimable: document.getElementById("jgClaimableToggle").checked,
+          receiptFile: base64ReceiptData,
+          receiptName: receiptFileName,
+          rawCarModel: activeCarObj.model,
+          rawCarPlate: activeCarObj.plate,
+          rawExpenseType: selectedType,
+          rawNotes: notes,
+        };
+
+        if (editingExpenseId) {
+          existingExpenses = existingExpenses.map((item) =>
+            item.id === editingExpenseId ? expenseData : item,
+          );
+          editingExpenseId = null;
+        } else {
+          existingExpenses.unshift(expenseData);
+        }
+
+        localStorage.setItem("savedExpenses", JSON.stringify(existingExpenses));
+
+        document.getElementById("expenseAmount").value = "";
+        document.getElementById("expenseNotes").value = "";
+        document.getElementById("jgClaimableToggle").checked = false;
+        clearAttachedFile();
+
+        alert(t.alertSaved);
+        document.getElementById("submitExpenseBtn").innerText = t.btnSave;
+
+        // Reset selected category back to standard default
+        selectedType = "Fuel";
+        renderChips();
+        renderExpenseFeed();
+      }
+
+      function removeExpenseItem(itemId) {
+        let existingExpenses =
+          JSON.parse(localStorage.getItem("savedExpenses")) || [];
+        existingExpenses = existingExpenses.filter(
+          (item) => item.id !== itemId,
+        );
+        localStorage.setItem("savedExpenses", JSON.stringify(existingExpenses));
+        renderExpenseFeed();
+      }
+
+      function renderExpenseFeed() {
+        const feedContainer = document.getElementById("expenseHistoryFeed");
+        const existingExpenses =
+          JSON.parse(localStorage.getItem("savedExpenses")) || [];
+        const t = translations[currentLang];
+
+        feedContainer.innerHTML = "";
+
+        if (existingExpenses.length === 0) {
+          feedContainer.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:14px;">${t.noRecords}</div>`;
+          return;
+        }
+
+        existingExpenses.forEach((item) => {
+          let claimStatusText = item.jgClaimable
+            ? t.claimBadge
+            : t.nonClaimBadge;
+          let claimStatusColor = item.jgClaimable
+            ? "var(--primary-blue)"
+            : "var(--text-muted)";
+
+          // Custom color coding formatting if the recorded object type is a Car Owner Reimbursement liability
+          if (item.rawExpenseType === "Owner Reimbursement") {
+            claimStatusText = t.reimburseBadge;
+            claimStatusColor = "var(--accent-orange)";
+          }
+
+          const hasPaper = item.receiptFile
+            ? `<span style="color: var(--success-green); margin-left:8px;">📎 Proof</span>`
+            : "";
+
+          feedContainer.innerHTML += `
+            <div class="history-item">
+              <div class="action-buttons-group">
+                <button class="action-btn edit-btn" onclick="startEditExpense(${item.id})">✏️</button>
+                <button class="action-btn remove-btn" onclick="removeExpenseItem(${item.id})">&times;</button>
+              </div>
+              <div class="history-content">
+                <div class="history-main-row">
+                  <span>RM ${item.amount} ${hasPaper}</span>
+                  <span style="color: ${claimStatusColor}; font-size: 12px; border: 1px solid ${claimStatusColor}; padding: 1px 6px; border-radius: 4px;">${claimStatusText}</span>
+                </div>
+                <div style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">
+                  <strong>${t.lblDate}:</strong> ${item.date}
+                </div>
+                <div style="color: #737373; font-size: 12px; margin-top: 4px; font-style: italic;">
+                  "${item.description}"
+                </div>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      loadCarsFromTripLogs();
+      updateToggleBtnText();
+      applyTranslations();
+    </script>
   </body>
 </html>
